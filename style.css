@@ -1,0 +1,870 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+:root {
+  --coffee: #6F4E37;
+  --coffee-light: #A67B5B;
+  --beige: #F5F0E8;
+  --cream: #FFF8F0;
+  --warm-brown: #8B6914;
+  --gold: #C8A96E;
+  --soft-pink: #E8C4B8;
+  --dark-coffee: #3E2723;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--beige);
+  color: var(--dark-coffee);
+  overflow: hidden;
+  height: 100dvh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+/* ── Floating Photos (Screen 1 BG) ── */
+.float-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.floating-polaroid {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* ── Photo Lightbox ── */
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(62, 39, 35, 0.85);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.lightbox.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.lightbox img {
+  max-width: 85%;
+  max-height: 75%;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  animation: lightboxIn 0.3s ease;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 40px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-appearance: none;
+}
+
+@keyframes lightboxIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.floating-polaroid {
+  position: absolute;
+  bottom: -120px;
+  background: white;
+  padding: 4px 4px 16px 4px;
+  border-radius: 3px;
+  box-shadow: 0 3px 12px rgba(62, 39, 35, 0.2);
+  animation: floatUp linear infinite;
+  opacity: 0;
+}
+
+.floating-polaroid img {
+  width: 75px;
+  height: 75px;
+  object-fit: cover;
+  border-radius: 1px;
+  display: block;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) rotate(var(--rot, 0deg)) scale(0.8);
+    opacity: 0;
+  }
+  10% { opacity: 0.9; }
+  80% { opacity: 0.75; }
+  100% {
+    transform: translateY(-115vh) rotate(calc(var(--rot, 0deg) + 180deg)) scale(0.5);
+    opacity: 0;
+  }
+}
+
+/* ── Screens ── */
+.screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+  z-index: 1;
+  padding: var(--safe-top) 0 var(--safe-bottom) 0;
+}
+
+.screen.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.screen-scroll {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+/* ── Envelope Screen ── */
+.envelope-wrapper {
+  text-align: center;
+  padding: 20px;
+}
+
+.tap-hint {
+  font-size: 0.95rem;
+  color: var(--coffee-light);
+  margin-bottom: 20px;
+  animation: pulse 2s ease-in-out infinite;
+  padding: 0 15px;
+}
+
+.envelope {
+  width: 220px;
+  height: 160px;
+  margin: 0 auto;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.envelope:active {
+  transform: scale(0.95);
+}
+
+.envelope-body {
+  width: 100%;
+  height: 100%;
+  background: var(--gold);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(111, 78, 55, 0.3);
+}
+
+.envelope-flap {
+  width: 0;
+  height: 0;
+  border-left: 110px solid transparent;
+  border-right: 110px solid transparent;
+  border-top: 90px solid var(--coffee-light);
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  transform-origin: top;
+  transition: transform 0.6s ease;
+}
+
+.envelope.opened .envelope-flap {
+  transform: rotateX(180deg);
+}
+
+.letter {
+  position: absolute;
+  bottom: 10px;
+  left: 10%;
+  width: 80%;
+  background: var(--cream);
+  padding: 15px;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--coffee);
+  transition: transform 0.6s ease 0.3s;
+}
+
+.envelope.opened .letter {
+  transform: translateY(-60px);
+}
+
+.envelope.locked-shake {
+  animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-8px); }
+  80% { transform: translateX(8px); }
+}
+
+/* ── Scrapbook BG (Screen 2) ── */
+.scrapbook-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.scrapbook-photo {
+  position: absolute;
+  background: white;
+  padding: 3px 3px 10px 3px;
+  box-shadow: 0 2px 10px rgba(62, 39, 35, 0.12);
+  border-radius: 3px;
+  opacity: 0.2;
+  transition: opacity 0.5s ease;
+}
+
+.scrapbook-photo img {
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  display: block;
+  border-radius: 1px;
+}
+
+/* ── Birthday Wish Screen ── */
+.wish-content {
+  text-align: center;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.cake-emoji {
+  font-size: 3.5rem;
+  animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.title {
+  font-family: 'Great Vibes', cursive;
+  font-size: 3rem;
+  color: var(--coffee);
+  margin: 8px 0 0;
+  animation: fadeInUp 1s ease forwards;
+}
+
+.name {
+  font-family: 'Great Vibes', cursive;
+  font-size: 3.8rem;
+  color: var(--gold);
+  text-shadow: 2px 2px 4px rgba(111, 78, 55, 0.2);
+  animation: fadeInUp 1s ease 0.3s forwards;
+  opacity: 0;
+}
+
+.stars {
+  font-size: 1.5rem;
+  margin: 8px 0;
+  animation: fadeInUp 1s ease 0.5s forwards;
+  opacity: 0;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--coffee-light);
+  max-width: 320px;
+  margin: 8px auto 24px;
+  animation: fadeInUp 1s ease 0.7s forwards;
+  opacity: 0;
+  padding: 0 15px;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Buttons ── */
+.btn {
+  background: linear-gradient(135deg, var(--coffee), var(--coffee-light));
+  color: var(--cream);
+  border: none;
+  padding: 14px 36px;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(111, 78, 55, 0.3);
+  animation: fadeInUp 1s ease 1s forwards;
+  opacity: 0;
+  -webkit-appearance: none;
+  touch-action: manipulation;
+}
+
+.btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 10px rgba(111, 78, 55, 0.3);
+}
+
+/* ── Photo Strips (Screen 3) ── */
+.photo-strip {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 50px;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0;
+  overflow: hidden;
+  opacity: 0.3;
+}
+
+.photo-strip-left { left: 0; padding-left: 4px; }
+.photo-strip-right { right: 0; padding-right: 4px; }
+
+.strip-photo {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(62, 39, 35, 0.15);
+  flex-shrink: 0;
+}
+
+/* ── Love Letter Screen ── */
+.letter-content {
+  text-align: center;
+  padding: 30px 20px;
+  max-width: 500px;
+  margin: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.section-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: 2.2rem;
+  color: var(--coffee);
+  margin-bottom: 16px;
+}
+
+.love-letter {
+  background: var(--cream);
+  padding: 24px;
+  border-radius: 16px;
+  text-align: left;
+  line-height: 1.8;
+  font-size: 0.9rem;
+  color: var(--dark-coffee);
+  box-shadow: 0 8px 30px rgba(111, 78, 55, 0.15);
+  margin-bottom: 24px;
+  border: 1px solid var(--soft-pink);
+  position: relative;
+}
+
+.love-letter::before {
+  content: '💌';
+  position: absolute;
+  top: -15px;
+  left: 20px;
+  font-size: 1.5rem;
+}
+
+.love-letter p {
+  margin-bottom: 12px;
+}
+
+.letter-sign {
+  text-align: right;
+  font-family: 'Great Vibes', cursive;
+  font-size: 1.3rem;
+  color: var(--coffee);
+  margin-top: 10px;
+}
+
+/* ── Gallery Screen ── */
+.gallery-content {
+  text-align: center;
+  padding: 20px;
+  width: 92%;
+  max-width: 420px;
+}
+
+.gallery-slider {
+  position: relative;
+  height: 340px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.gallery-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform: scale(0.92);
+  transition: all 0.5s ease;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(111, 78, 55, 0.15);
+}
+
+.gallery-card.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.gallery-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-counter {
+  font-size: 0.8rem;
+  color: var(--coffee-light);
+  margin-bottom: 8px;
+  font-weight: 300;
+}
+
+.gallery-controls {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 16px;
+}
+
+.gallery-arrow {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--coffee-light);
+  background: var(--cream);
+  font-size: 1.4rem;
+  color: var(--coffee);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  -webkit-appearance: none;
+  touch-action: manipulation;
+}
+
+.gallery-arrow:active {
+  background: var(--coffee);
+  color: var(--cream);
+  transform: scale(0.9);
+}
+
+/* ── Final Screen ── */
+.final-content {
+  text-align: center;
+  padding: 20px 20px;
+  z-index: 2;
+  position: relative;
+  margin: auto;
+}
+
+.final-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: 2.5rem;
+  color: var(--coffee);
+  margin: 8px 0 16px;
+}
+
+/* ── Cake & Candles ── */
+.cake-container {
+  margin: 0 auto 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.candles-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: -4px;
+  z-index: 2;
+  position: relative;
+}
+
+.candle {
+  width: 8px;
+  height: 40px;
+  background: linear-gradient(to bottom, #F5E6CA, var(--gold));
+  border-radius: 2px 2px 0 0;
+  position: relative;
+  cursor: pointer;
+}
+
+.flame {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 18px;
+  background: radial-gradient(ellipse at bottom, #FFD700, #FF6B00, transparent);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: flicker 0.3s ease-in-out infinite alternate;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.flame::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 10px;
+  background: radial-gradient(ellipse at bottom, #FFF8DC, #FFD700, transparent);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+}
+
+.flame.out {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-10px) scale(0);
+}
+
+.smoke {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: rgba(150, 150, 150, 0.5);
+  border-radius: 50%;
+  animation: smokeUp 1s ease forwards;
+}
+
+@keyframes flicker {
+  0% { transform: translateX(-50%) scale(1) rotate(-2deg); }
+  100% { transform: translateX(-50%) scale(1.1) rotate(2deg); }
+}
+
+@keyframes smokeUp {
+  0% { opacity: 0.6; transform: translateX(-50%) translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-40px) scale(3); }
+}
+
+.cake-body {
+  position: relative;
+}
+
+.cake-top {
+  font-size: 5rem;
+}
+
+.blow-hint {
+  font-size: 0.85rem;
+  color: var(--coffee-light);
+  margin-bottom: 12px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.blow-hint.hidden {
+  display: none;
+}
+
+.countdown-box {
+  background: var(--cream);
+  padding: 12px 24px;
+  border-radius: 16px;
+  display: inline-block;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 15px rgba(111, 78, 55, 0.15);
+}
+
+.countdown-label {
+  font-size: 0.8rem;
+  color: var(--coffee-light);
+  margin-bottom: 4px;
+}
+
+.countdown {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--coffee);
+}
+
+.confetti-btn {
+  font-size: 1rem;
+  padding: 14px 36px;
+  background: linear-gradient(135deg, var(--gold), var(--coffee-light));
+}
+
+.confetti-btn.hidden {
+  display: none;
+}
+
+/* ── Final Reveal ── */
+.final-reveal {
+  display: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+  margin-top: 20px;
+}
+
+.final-reveal.visible {
+  display: block;
+  opacity: 1;
+}
+
+.reveal-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: 2.2rem;
+  color: var(--coffee);
+  margin: 16px 0 12px;
+  animation: fadeInUp 1s ease forwards;
+}
+
+.reveal-message {
+  font-size: 0.95rem;
+  color: var(--coffee-light);
+  max-width: 350px;
+  margin: 0 auto 20px;
+  line-height: 1.7;
+  animation: fadeInUp 1s ease 0.3s forwards;
+  opacity: 0;
+}
+
+.best-photo-frame {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 16px;
+  background: white;
+  padding: 8px 8px 28px 8px;
+  border-radius: 4px;
+  box-shadow: 0 8px 30px rgba(62, 39, 35, 0.25);
+  transform: rotate(-3deg);
+  animation: fadeInUp 1s ease 0.6s forwards;
+  opacity: 0;
+}
+
+.best-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.reveal-sign {
+  font-family: 'Great Vibes', cursive;
+  font-size: 1.8rem;
+  color: var(--gold);
+  animation: fadeInUp 1s ease 0.9s forwards;
+  opacity: 0;
+  margin-bottom: 20px;
+}
+
+/* ── Photo Heart ── */
+.photo-heart {
+  width: 200px;
+  height: 180px;
+  margin: 0 auto 10px;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+}
+
+.heart-photo {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  border-radius: 3px;
+  opacity: 0;
+  animation: heartPhotoIn 0.4s ease forwards;
+}
+
+@keyframes heartPhotoIn {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ── Canvases ── */
+#confettiCanvas, #fireworksCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ── Music Toggle ── */
+.music-toggle {
+  position: fixed;
+  bottom: 20px;
+  bottom: calc(20px + var(--safe-bottom));
+  right: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: var(--coffee);
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(111, 78, 55, 0.3);
+  transition: all 0.2s ease;
+  opacity: 0.85;
+  -webkit-appearance: none;
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.music-hint {
+  position: fixed;
+  bottom: 72px;
+  bottom: calc(72px + var(--safe-bottom));
+  right: 8px;
+  background: var(--coffee);
+  color: var(--cream);
+  font-size: 0.7rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+  z-index: 100;
+  box-shadow: 0 3px 10px rgba(111, 78, 55, 0.3);
+  animation: hintBounce 2s ease-in-out infinite;
+  white-space: nowrap;
+}
+
+.music-hint.hidden {
+  display: none;
+}
+
+@keyframes hintBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.music-toggle:active {
+  transform: scale(0.9);
+}
+
+.music-toggle.playing {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
+/* ── iPhone Responsive ── */
+@media (max-width: 430px) {
+  .title { font-size: 2.5rem; }
+  .name { font-size: 3.2rem; }
+  .final-title { font-size: 2.2rem; }
+  .section-title { font-size: 1.9rem; }
+  .love-letter { padding: 18px; font-size: 0.85rem; }
+  .gallery-slider { height: 300px; }
+  .scrapbook-photo img { width: 65px; height: 65px; }
+}
+
+@media (max-width: 375px) {
+  .title { font-size: 2.2rem; }
+  .name { font-size: 2.8rem; }
+  .final-title { font-size: 1.9rem; }
+  .section-title { font-size: 1.7rem; }
+  .btn { padding: 12px 28px; font-size: 0.9rem; }
+  .gallery-slider { height: 260px; }
+  .love-letter { padding: 16px; font-size: 0.8rem; line-height: 1.7; }
+  .final-message { font-size: 0.85rem; }
+  .subtitle { font-size: 0.9rem; }
+  .photo-heart { width: 170px; height: 155px; }
+  .heart-photo { width: 24px; height: 24px; }
+  .scrapbook-photo img { width: 55px; height: 55px; }
+}
+
+@media (max-height: 700px) {
+  .cake-emoji { font-size: 2.5rem; }
+  .title { font-size: 2.2rem; }
+  .name { font-size: 2.8rem; }
+  .stars { margin: 4px 0; }
+  .subtitle { margin: 4px auto 16px; }
+  .final-title { font-size: 2rem; margin: 6px 0; }
+  .final-message { margin: 0 auto 10px; }
+  .countdown-box { margin-bottom: 10px; padding: 10px 20px; }
+  .gallery-slider { height: 240px; }
+  .photo-heart { width: 160px; height: 140px; }
+  .heart-photo { width: 22px; height: 22px; }
+}

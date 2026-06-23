@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="HBD Chunnu">
+  <meta name="theme-color" content="#F5F0E8">
+  <title>Happy Birthday Chunnu 🎂</title>
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎂</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Floating photos background -->
+  <div class="float-container" id="floatContainer"></div>
+
+  <!-- SCREEN 1: Envelope Reveal -->
+  <section class="screen active" id="envelopeScreen">
+    <div class="envelope-wrapper">
+      <p class="tap-hint">Tap the envelope</p>
+      <div class="envelope" id="envelope">
+        <div class="envelope-flap"></div>
+        <div class="envelope-body">
+          <div class="letter">
+            <p>You have a special surprise...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN 2: Birthday Wish -->
+  <section class="screen" id="wishScreen">
+    <div class="wish-content">
+      <div class="cake-emoji">🎂</div>
+      <h1 class="title">Happy Birthday</h1>
+      <h2 class="name">Chunnu</h2>
+      <div class="stars">✨🌟✨</div>
+      <p class="subtitle">You make every day brighter just by being you</p>
+      <button class="btn" id="nextToLetter">Read My Letter 💌</button>
+    </div>
+  </section>
+
+  <!-- SCREEN 3: Love Letter -->
+  <section class="screen" id="letterScreen">
+    <div class="photo-strip photo-strip-left" id="stripLeft"></div>
+    <div class="photo-strip photo-strip-right" id="stripRight"></div>
+    <div class="screen-scroll">
+      <div class="letter-content">
+        <h2 class="section-title">A Letter For You</h2>
+        <div class="love-letter">
+          <p>Dear Chunnu,</p>
+          <p>On your special day, I just want you to know how incredibly grateful I am to have you in my life. Every moment with you feels like a beautiful dream I never want to wake up from.</p>
+          <p>Your smile lights up my world, your laugh is my favorite sound, and your love is the greatest gift I've ever received.</p>
+          <p>Today and every day, I celebrate you — the most wonderful person I know.</p>
+          <p class="letter-sign">Forever yours ❤️</p>
+        </div>
+        <button class="btn" id="nextToGallery">See Our Memories 📸</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN 4: Photo Gallery -->
+  <section class="screen" id="galleryScreen">
+    <div class="gallery-content">
+      <h2 class="section-title">Our Memories Together</h2>
+      <div class="gallery-slider" id="gallerySlider"></div>
+      <div class="gallery-counter" id="galleryCounter">1 / 30</div>
+      <div class="gallery-controls">
+        <button class="gallery-arrow" id="prevSlide">‹</button>
+        <button class="gallery-arrow" id="nextSlide">›</button>
+      </div>
+      <button class="btn" id="nextToWishes">Final Surprise 🎁</button>
+    </div>
+  </section>
+
+  <!-- SCREEN 5: Cake & Candles -->
+  <section class="screen" id="finalScreen">
+    <div class="screen-scroll">
+      <div class="final-content">
+        <h1 class="final-title">Make a Wish, Chunnu!</h1>
+        <div class="cake-container" id="cakeContainer">
+          <div class="candles-row" id="candlesRow">
+            <div class="candle"><div class="flame"></div></div>
+            <div class="candle"><div class="flame"></div></div>
+            <div class="candle"><div class="flame"></div></div>
+            <div class="candle"><div class="flame"></div></div>
+            <div class="candle"><div class="flame"></div></div>
+          </div>
+          <div class="cake-body">
+            <div class="cake-top">🎂</div>
+          </div>
+        </div>
+        <p class="blow-hint" id="blowHint">Tap the candles to blow them out!</p>
+        <div class="countdown-box">
+          <p class="countdown-label">Your special day</p>
+          <div class="countdown" id="countdown"></div>
+        </div>
+        <button class="btn confetti-btn" id="blowBtn">🎉 Blow the Candles! 🎉</button>
+
+        <!-- Hidden final reveal -->
+        <div class="final-reveal" id="finalReveal">
+          <div class="photo-heart" id="photoHeart"></div>
+          <h1 class="reveal-title">I Love You More Than Words Can Say</h1>
+          <p class="reveal-message">Happy Birthday My Love! Here's to another year of love, laughter, and making memories together. You deserve all the happiness in the world, Chunnu.</p>
+          <div class="best-photo-frame" id="bestPhotoFrame">
+            <img src="photos/1.jpg" alt="Us" class="best-photo">
+          </div>
+          <p class="reveal-sign">Forever & Always ❤️</p>
+        </div>
+      </div>
+    </div>
+    <canvas id="confettiCanvas"></canvas>
+    <canvas id="fireworksCanvas"></canvas>
+  </section>
+
+  <!-- Photo Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">✕</button>
+    <img id="lightboxImg" src="" alt="photo">
+  </div>
+
+  <!-- Music toggle -->
+  <div class="music-hint" id="musicHint">Tap for music 🎵</div>
+  <button class="music-toggle" id="musicToggle">🎵</button>
+  <audio id="bgMusic" loop preload="auto">
+    <source src="Hona Tha Pyar- Atif Aslam(Lyrics).mp3" type="audio/mpeg">
+  </audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
