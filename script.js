@@ -69,7 +69,8 @@ function createFloatingPhoto() {
   polaroid.style.setProperty('--rot', rot + 'deg');
   const r = Math.random();
   polaroid.style.left = r < 0.5 ? (Math.random() * 30) + '%' : (65 + Math.random() * 30) + '%';
-  polaroid.style.animationDuration = (Math.random() * 3 + 10) + 's';
+  const duration = Math.random() * 3 + 12;
+  polaroid.style.animationDuration = duration + 's';
   polaroid.style.animationDelay = '0s';
 
   const img = document.createElement('img');
@@ -81,7 +82,7 @@ function createFloatingPhoto() {
   polaroid.addEventListener('click', () => openLightbox(src));
 
   floatContainer.appendChild(polaroid);
-  setTimeout(() => polaroid.remove(), 14000);
+  setTimeout(() => polaroid.remove(), duration * 1000 + 500);
 }
 
 // ── Photo Lightbox ──

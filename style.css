@@ -265,10 +265,11 @@ body {
     transform: translateY(0) rotate(var(--rot, 0deg)) scale(0.8);
     opacity: 0;
   }
-  10% { opacity: 0.9; }
-  80% { opacity: 0.75; }
+  8% { opacity: 0.9; }
+  85% { opacity: 0.8; }
+  95% { opacity: 0.4; }
   100% {
-    transform: translateY(-115vh) rotate(calc(var(--rot, 0deg) + 180deg)) scale(0.5);
+    transform: translateY(-120vh) rotate(calc(var(--rot, 0deg) + 180deg)) scale(0.5);
     opacity: 0;
   }
 }
