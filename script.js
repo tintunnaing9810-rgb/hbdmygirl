@@ -118,27 +118,45 @@ function showScreen(screenId) {
 // ── Envelope ──
 const envelope = document.getElementById('envelope');
 const tapHint = document.querySelector('.tap-hint');
-const BIRTHDAY = new Date(2026, 5, 26, 0, 0, 0);
+
+// June 26, 2026 5:00 AM Myanmar Time (UTC+6:30) = June 25, 2026 22:30 UTC
+const UNLOCK_TIME = Date.UTC(2026, 5, 25, 22, 30, 0);
+
+function isUnlocked() {
+  return Date.now() >= UNLOCK_TIME;
+}
 
 function updateEnvelopeCountdown() {
-  const now = new Date();
-  const diff = BIRTHDAY - now;
+  const diff = UNLOCK_TIME - Date.now();
   if (diff <= 0) {
-    tapHint.textContent = 'Tap the envelope';
+    tapHint.innerHTML = 'Tap the envelope 💌';
+    tapHint.style.fontSize = '1.05rem';
+    envelope.style.opacity = '1';
     return;
   }
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const secs = Math.floor((diff % (1000 * 60)) / 1000);
-  tapHint.textContent = `Your surprise unlocks in ${days}d ${hours}h ${mins}m ${secs}s`;
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const mins = Math.floor((diff % 3600000) / 60000);
+  const secs = Math.floor((diff % 60000) / 1000);
+
+  let timeStr = '';
+  if (days > 0) timeStr += days + 'd ';
+  timeStr += hours + 'h ' + mins + 'm ' + secs + 's';
+
+  tapHint.innerHTML = 'Your surprise unlocks in<br><span style="font-size:1.2rem;font-weight:600;color:#6F4E37;letter-spacing:1px">' + timeStr + '</span>';
+  envelope.style.opacity = '0.85';
 }
 
 updateEnvelopeCountdown();
 setInterval(updateEnvelopeCountdown, 1000);
 
-// TODO: Re-enable date lock before going live
 envelope.addEventListener('click', () => {
+  if (!isUnlocked()) {
+    vibrate();
+    envelope.classList.add('locked-shake');
+    setTimeout(() => envelope.classList.remove('locked-shake'), 500);
+    return;
+  }
   envelope.classList.add('opened');
   if (!isPlaying) {
     music.currentTime = 17;
