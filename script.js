@@ -158,11 +158,7 @@ envelope.addEventListener('click', () => {
     return;
   }
   envelope.classList.add('opened');
-  if (!isPlaying) {
-    music.currentTime = 17;
-    music.play().catch(() => {});
-    isPlaying = true;
-  }
+  if (!isPlaying) playMusic();
   setTimeout(() => showScreen('wishScreen'), 1200);
 });
 
@@ -501,22 +497,42 @@ function explode(fw) {
   }
 }
 
-// ── Music (auto-play, no visible button) ──
+// ── Music (iOS-safe) ──
 const music = document.getElementById('bgMusic');
 let isPlaying = false;
 let audioUnlocked = false;
 
 function unlockAudio() {
   if (audioUnlocked) return;
-  music.play().then(() => {
-    music.pause();
-    music.currentTime = 0;
-    audioUnlocked = true;
-  }).catch(() => {});
+  music.volume = 0.01;
+  const p = music.play();
+  if (p) {
+    p.then(() => {
+      music.pause();
+      music.currentTime = 0;
+      music.volume = 1;
+      audioUnlocked = true;
+    }).catch(() => {});
+  }
 }
 
-document.addEventListener('touchstart', unlockAudio, { once: true });
-document.addEventListener('click', unlockAudio, { once: true });
+function playMusic() {
+  music.currentTime = 17;
+  music.volume = 1;
+  const p = music.play();
+  if (p) {
+    p.then(() => { isPlaying = true; })
+     .catch(() => {
+       setTimeout(() => {
+         music.play().then(() => { isPlaying = true; }).catch(() => {});
+       }, 300);
+     });
+  }
+}
+
+document.addEventListener('touchstart', unlockAudio, { once: false });
+document.addEventListener('touchend', unlockAudio, { once: false });
+document.addEventListener('click', unlockAudio, { once: false });
 
 // ── Flower Petals (heavy) ──
 const flowerContainer = document.getElementById('flowerContainer');
