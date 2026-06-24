@@ -122,9 +122,10 @@ const tapHint = document.querySelector('.tap-hint');
 
 // June 26, 2026 5:00 AM Myanmar Time (UTC+6:30) = June 25, 2026 22:30 UTC
 const UNLOCK_TIME = Date.UTC(2026, 5, 25, 22, 30, 0);
+const PREVIEW_MODE = new URLSearchParams(window.location.search).has('preview');
 
 function isUnlocked() {
-  return Date.now() >= UNLOCK_TIME;
+  return PREVIEW_MODE || Date.now() >= UNLOCK_TIME;
 }
 
 function updateEnvelopeCountdown() {
