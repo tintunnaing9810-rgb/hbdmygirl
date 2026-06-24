@@ -49,6 +49,60 @@ body {
   filter: blur(2px);
 }
 
+/* ── Glitter Canvas ── */
+.glitter-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ── Flower Petals ── */
+.flower-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.flower-petal {
+  position: absolute;
+  top: -60px;
+  font-size: 1.4rem;
+  opacity: 0;
+  animation: petalFall linear forwards;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(200, 169, 110, 0.3));
+}
+
+@keyframes petalFall {
+  0% {
+    opacity: 0;
+    transform: translateY(0) translateX(0) rotate(0deg) scale(0.6);
+  }
+  8% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateY(50vh) translateX(var(--sway, 40px)) rotate(180deg) scale(1);
+  }
+  85% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(110vh) translateX(calc(var(--sway, 40px) * -0.5)) rotate(400deg) scale(0.4);
+  }
+}
+
 /* ── Envelope Photo ── */
 .envelope-photo {
   width: 120px;
@@ -222,13 +276,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px 0;
+  padding: 20px 0 40px;
 }
 
 /* ── Envelope Screen ── */
 .envelope-wrapper {
   text-align: center;
-  padding: 20px;
+  padding: 20px 20px 40px;
 }
 
 .tap-hint {
@@ -341,7 +395,7 @@ body {
 /* ── Birthday Wish Screen ── */
 .wish-content {
   text-align: center;
-  padding: 20px;
+  padding: 20px 20px 40px;
   position: relative;
   z-index: 1;
 }
@@ -449,7 +503,7 @@ body {
 /* ── Love Letter Screen ── */
 .letter-content {
   text-align: center;
-  padding: 30px 20px;
+  padding: 30px 20px 40px;
   max-width: 500px;
   margin: auto;
   position: relative;
@@ -500,7 +554,7 @@ body {
 /* ── Gallery Screen ── */
 .gallery-content {
   text-align: center;
-  padding: 20px;
+  padding: 20px 20px 40px;
   width: 92%;
   max-width: 420px;
 }
@@ -579,7 +633,7 @@ body {
 /* ── Final Screen ── */
 .final-content {
   text-align: center;
-  padding: 20px 20px;
+  padding: 20px 20px 40px;
   z-index: 2;
   position: relative;
   margin: auto;
@@ -816,63 +870,6 @@ body {
   height: 100%;
   pointer-events: none;
   z-index: 10;
-}
-
-/* ── Music Toggle ── */
-.music-toggle {
-  position: fixed;
-  bottom: 20px;
-  bottom: calc(20px + var(--safe-bottom));
-  right: 16px;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: none;
-  background: var(--coffee);
-  font-size: 1.2rem;
-  cursor: pointer;
-  z-index: 100;
-  box-shadow: 0 4px 15px rgba(111, 78, 55, 0.3);
-  transition: all 0.2s ease;
-  opacity: 0.85;
-  -webkit-appearance: none;
-  touch-action: manipulation;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.music-hint {
-  position: fixed;
-  bottom: 72px;
-  bottom: calc(72px + var(--safe-bottom));
-  right: 8px;
-  background: var(--coffee);
-  color: var(--cream);
-  font-size: 0.7rem;
-  padding: 6px 12px;
-  border-radius: 20px;
-  z-index: 100;
-  box-shadow: 0 3px 10px rgba(111, 78, 55, 0.3);
-  animation: hintBounce 2s ease-in-out infinite;
-  white-space: nowrap;
-}
-
-.music-hint.hidden {
-  display: none;
-}
-
-@keyframes hintBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-
-.music-toggle:active {
-  transform: scale(0.9);
-}
-
-.music-toggle.playing {
-  animation: pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes pulse {

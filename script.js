@@ -1,9 +1,11 @@
 // ── Photo Config ──
 const FLOAT_PHOTOS = 16;
 const GALLERY_PHOTOS = 26;
+const EXTRA_PHOTOS = 28;
 
 function floatPath(n) { return 'assets/float_' + n + '.jpg'; }
 function galleryPath(n) { return 'assets/gallery_' + n + '.jpg'; }
+function extraPath(n) { return 'photos/' + n + '.jpg'; }
 
 function shuffled(arr) {
   const a = [...arr];
@@ -16,6 +18,12 @@ function shuffled(arr) {
 
 const floatIndices = Array.from({ length: FLOAT_PHOTOS }, (_, i) => i + 1);
 const galleryIndices = Array.from({ length: GALLERY_PHOTOS }, (_, i) => i + 1);
+const extraIndices = Array.from({ length: EXTRA_PHOTOS }, (_, i) => i + 1);
+
+const allFloatSources = [
+  ...floatIndices.map(n => floatPath(n)),
+  ...extraIndices.map(n => extraPath(n)),
+];
 
 // Preload gallery photos
 const photoCache = {};
@@ -34,13 +42,13 @@ function vibrate() {
 
 // ── Floating Polaroid Photos ──
 const floatContainer = document.getElementById('floatContainer');
-const floatPool = shuffled(floatIndices);
+const floatPool = shuffled(allFloatSources);
 let floatIdx = 0;
 
 function createFloatingPhoto() {
-  if (floatContainer.children.length >= 8) return;
+  if (floatContainer.children.length >= 10) return;
 
-  const idx = floatPool[floatIdx % floatPool.length];
+  const src = floatPool[floatIdx % floatPool.length];
   floatIdx++;
 
   const polaroid = document.createElement('div');
@@ -53,12 +61,12 @@ function createFloatingPhoto() {
   polaroid.style.animationDelay = '0s';
 
   const img = document.createElement('img');
-  img.src = floatPath(idx);
+  img.src = src;
   img.alt = 'memory';
   img.loading = 'lazy';
   polaroid.appendChild(img);
 
-  polaroid.addEventListener('click', () => openLightbox(floatPath(idx)));
+  polaroid.addEventListener('click', () => openLightbox(src));
 
   floatContainer.appendChild(polaroid);
   setTimeout(() => polaroid.remove(), 14000);
@@ -83,8 +91,8 @@ lightbox.addEventListener('click', (e) => {
   if (e.target === lightbox) closeLightbox();
 });
 
-setInterval(createFloatingPhoto, isMobile ? 1800 : 1200);
-for (let i = 0; i < 4; i++) setTimeout(createFloatingPhoto, i * 800);
+setInterval(createFloatingPhoto, isMobile ? 1500 : 1000);
+for (let i = 0; i < 5; i++) setTimeout(createFloatingPhoto, i * 600);
 
 // ── Screen Navigation ──
 function showScreen(screenId) {
@@ -119,21 +127,11 @@ setInterval(updateEnvelopeCountdown, 1000);
 
 // TODO: Re-enable date lock before going live
 envelope.addEventListener('click', () => {
-  // const now = new Date();
-  // if (now < BIRTHDAY) {
-  //   vibrate();
-  //   envelope.classList.add('locked-shake');
-  //   setTimeout(() => envelope.classList.remove('locked-shake'), 500);
-  //   return;
-  // }
   envelope.classList.add('opened');
   if (!isPlaying) {
     music.currentTime = 17;
     music.play().catch(() => {});
     isPlaying = true;
-    musicBtn.classList.add('playing');
-    musicBtn.textContent = '🔊';
-    musicHint.classList.add('hidden');
   }
   setTimeout(() => showScreen('wishScreen'), 1200);
 });
@@ -424,7 +422,7 @@ function resizeFwCanvas() {
   fwCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 resizeFwCanvas();
-window.addEventListener('resize', () => { resizeConfettiCanvas(); resizeFwCanvas(); });
+window.addEventListener('resize', () => { resizeConfettiCanvas(); resizeFwCanvas(); resizeGlitterCanvas(); });
 
 function startFireworks() {
   fwActive = true;
@@ -494,10 +492,8 @@ function explode(fw) {
   }
 }
 
-// ── Music (iOS-friendly) ──
+// ── Music (auto-play, no visible button) ──
 const music = document.getElementById('bgMusic');
-const musicBtn = document.getElementById('musicToggle');
-const musicHint = document.getElementById('musicHint');
 let isPlaying = false;
 let audioUnlocked = false;
 
@@ -513,20 +509,122 @@ function unlockAudio() {
 document.addEventListener('touchstart', unlockAudio, { once: true });
 document.addEventListener('click', unlockAudio, { once: true });
 
-musicBtn.addEventListener('click', () => {
-  musicHint.classList.add('hidden');
-  if (isPlaying) {
-    music.pause();
-    musicBtn.classList.remove('playing');
-    musicBtn.textContent = '🎵';
-  } else {
-    if (music.currentTime === 0) music.currentTime = 17;
-    music.play().catch(() => {});
-    musicBtn.classList.add('playing');
-    musicBtn.textContent = '🔊';
+// ── Flower Petals ──
+const flowerContainer = document.getElementById('flowerContainer');
+const flowerEmojis = ['🌸', '🌺', '🌷', '💮', '🏵️', '🌹', '💐'];
+const petalCount = isMobile ? 3 : 5;
+
+function createFlowerPetal() {
+  if (flowerContainer.children.length >= (isMobile ? 12 : 20)) return;
+
+  const petal = document.createElement('div');
+  petal.classList.add('flower-petal');
+  petal.textContent = flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)];
+
+  petal.style.left = (Math.random() * 100) + '%';
+  petal.style.fontSize = (1 + Math.random() * 1.2) + 'rem';
+  petal.style.setProperty('--sway', ((Math.random() - 0.5) * 120) + 'px');
+
+  const duration = 6 + Math.random() * 6;
+  petal.style.animationDuration = duration + 's';
+  petal.style.animationDelay = (Math.random() * 2) + 's';
+
+  flowerContainer.appendChild(petal);
+  setTimeout(() => petal.remove(), (duration + 3) * 1000);
+}
+
+setInterval(() => {
+  for (let i = 0; i < petalCount; i++) {
+    setTimeout(createFlowerPetal, i * 300);
   }
-  isPlaying = !isPlaying;
-});
+}, 2000);
+
+for (let i = 0; i < 6; i++) setTimeout(createFlowerPetal, i * 400);
+
+// ── Glitter / Sparkle Effect ──
+const glitterCanvas = document.getElementById('glitterCanvas');
+const glCtx = glitterCanvas.getContext('2d');
+let glitterParticles = [];
+const maxGlitter = isMobile ? 35 : 60;
+const glitterColors = ['#FFD700', '#FFF8DC', '#C8A96E', '#FFFFFF', '#FFE4B5', '#F5DEB3', '#FFFACD'];
+
+function resizeGlitterCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  glitterCanvas.width = window.innerWidth * dpr;
+  glitterCanvas.height = window.innerHeight * dpr;
+  glitterCanvas.style.width = window.innerWidth + 'px';
+  glitterCanvas.style.height = window.innerHeight + 'px';
+  glCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+resizeGlitterCanvas();
+
+function spawnGlitter() {
+  if (glitterParticles.length < maxGlitter) {
+    glitterParticles.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      size: Math.random() * 3 + 1,
+      color: glitterColors[Math.floor(Math.random() * glitterColors.length)],
+      life: 0,
+      maxLife: 0.6 + Math.random() * 0.8,
+      speed: 0.008 + Math.random() * 0.015,
+      twinkleSpeed: 2 + Math.random() * 4,
+      driftX: (Math.random() - 0.5) * 0.3,
+      driftY: Math.random() * 0.2 + 0.05,
+    });
+  }
+}
+
+function animateGlitter() {
+  glCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+  for (let i = 0; i < 2; i++) spawnGlitter();
+
+  glitterParticles = glitterParticles.filter(p => {
+    p.life += p.speed;
+    if (p.life >= p.maxLife) return false;
+
+    p.x += p.driftX;
+    p.y += p.driftY;
+
+    const progress = p.life / p.maxLife;
+    const fadeIn = Math.min(progress * 4, 1);
+    const fadeOut = Math.max(1 - (progress - 0.6) / 0.4, 0);
+    const alpha = fadeIn * fadeOut;
+
+    const twinkle = 0.5 + 0.5 * Math.sin(p.life * p.twinkleSpeed * Math.PI * 2);
+    const finalAlpha = alpha * (0.3 + 0.7 * twinkle);
+
+    glCtx.save();
+    glCtx.globalAlpha = finalAlpha;
+    glCtx.translate(p.x, p.y);
+
+    const starSize = p.size * (0.8 + 0.4 * twinkle);
+    glCtx.fillStyle = p.color;
+    glCtx.beginPath();
+    for (let j = 0; j < 4; j++) {
+      const angle = (j * Math.PI) / 2;
+      glCtx.moveTo(0, 0);
+      glCtx.lineTo(Math.cos(angle - 0.15) * starSize * 0.4, Math.sin(angle - 0.15) * starSize * 0.4);
+      glCtx.lineTo(Math.cos(angle) * starSize, Math.sin(angle) * starSize);
+      glCtx.lineTo(Math.cos(angle + 0.15) * starSize * 0.4, Math.sin(angle + 0.15) * starSize * 0.4);
+    }
+    glCtx.closePath();
+    glCtx.fill();
+
+    glCtx.beginPath();
+    glCtx.arc(0, 0, starSize * 0.5, 0, Math.PI * 2);
+    glCtx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    glCtx.fill();
+
+    glCtx.restore();
+    return true;
+  });
+
+  requestAnimationFrame(animateGlitter);
+}
+
+animateGlitter();
 
 // ── Prevent iOS bounce ──
 document.addEventListener('touchmove', function(e) {

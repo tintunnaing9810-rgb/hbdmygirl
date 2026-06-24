@@ -14,6 +14,12 @@
 </head>
 <body>
 
+  <!-- Glitter canvas -->
+  <canvas class="glitter-canvas" id="glitterCanvas"></canvas>
+
+  <!-- Flower petals container -->
+  <div class="flower-container" id="flowerContainer"></div>
+
   <!-- Floating photos background -->
   <div class="float-container" id="floatContainer"></div>
 
@@ -24,16 +30,18 @@
 
   <!-- SCREEN 1: Envelope Reveal -->
   <section class="screen active" id="envelopeScreen">
-    <div class="envelope-wrapper">
-      <div class="envelope-photo">
-        <img src="assets/envelope_photo.jpg" alt="us">
-      </div>
-      <p class="tap-hint">Tap the envelope</p>
-      <div class="envelope" id="envelope">
-        <div class="envelope-flap"></div>
-        <div class="envelope-body">
-          <div class="letter">
-            <p>You have a special surprise...</p>
+    <div class="screen-scroll">
+      <div class="envelope-wrapper">
+        <div class="envelope-photo">
+          <img src="assets/envelope_photo.jpg" alt="us">
+        </div>
+        <p class="tap-hint">Tap the envelope</p>
+        <div class="envelope" id="envelope">
+          <div class="envelope-flap"></div>
+          <div class="envelope-body">
+            <div class="letter">
+              <p>You have a special surprise...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -42,13 +50,15 @@
 
   <!-- SCREEN 2: Birthday Wish -->
   <section class="screen" id="wishScreen">
-    <div class="wish-content">
-      <div class="cake-emoji">🎂</div>
-      <h1 class="title">Happy Birthday</h1>
-      <h2 class="name">Chunnu</h2>
-      <div class="stars">✨🌟✨</div>
-      <p class="subtitle">You make every day brighter just by being you</p>
-      <button class="btn" id="nextToLetter">Read My Letter 💌</button>
+    <div class="screen-scroll">
+      <div class="wish-content">
+        <div class="cake-emoji">🎂</div>
+        <h1 class="title">Happy Birthday</h1>
+        <h2 class="name">Chunnu</h2>
+        <div class="stars">✨🌟✨</div>
+        <p class="subtitle">You make every day brighter just by being you</p>
+        <button class="btn" id="nextToLetter">Read My Letter 💌</button>
+      </div>
     </div>
   </section>
 
@@ -76,15 +86,17 @@
 
   <!-- SCREEN 4: Photo Gallery -->
   <section class="screen" id="galleryScreen">
-    <div class="gallery-content">
-      <h2 class="section-title">Our Memories Together</h2>
-      <div class="gallery-slider" id="gallerySlider"></div>
-      <div class="gallery-counter" id="galleryCounter">1 / 30</div>
-      <div class="gallery-controls">
-        <button class="gallery-arrow" id="prevSlide">‹</button>
-        <button class="gallery-arrow" id="nextSlide">›</button>
+    <div class="screen-scroll">
+      <div class="gallery-content">
+        <h2 class="section-title">Our Memories Together</h2>
+        <div class="gallery-slider" id="gallerySlider"></div>
+        <div class="gallery-counter" id="galleryCounter">1 / 30</div>
+        <div class="gallery-controls">
+          <button class="gallery-arrow" id="prevSlide">‹</button>
+          <button class="gallery-arrow" id="nextSlide">›</button>
+        </div>
+        <button class="btn" id="nextToWishes">Final Surprise 🎁</button>
       </div>
-      <button class="btn" id="nextToWishes">Final Surprise 🎁</button>
     </div>
   </section>
 
@@ -134,9 +146,7 @@
     <img id="lightboxImg" src="" alt="photo">
   </div>
 
-  <!-- Music toggle -->
-  <div class="music-hint" id="musicHint">Tap for music 🎵</div>
-  <button class="music-toggle" id="musicToggle">🎵</button>
+  <!-- Music (hidden, no visible button) -->
   <audio id="bgMusic" loop preload="auto">
     <source src="Hona Tha Pyar- Atif Aslam(Lyrics).mp3" type="audio/mpeg">
   </audio>
