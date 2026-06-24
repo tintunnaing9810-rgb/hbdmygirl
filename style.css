@@ -29,7 +29,9 @@ body {
   background: var(--beige);
   color: var(--dark-coffee);
   overflow: hidden;
+  height: 100vh;
   height: 100dvh;
+  height: -webkit-fill-available;
   width: 100vw;
   position: fixed;
   top: 0;
@@ -80,6 +82,31 @@ body {
   animation: petalFall linear forwards;
   pointer-events: none;
   filter: drop-shadow(0 2px 4px rgba(200, 169, 110, 0.3));
+}
+
+/* ── Sparkle emoji ── */
+.sparkle-float {
+  position: absolute;
+  top: -40px;
+  pointer-events: none;
+  opacity: 0;
+  animation: sparkleFall linear forwards;
+}
+
+@keyframes sparkleFall {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.5);
+  }
+  10% { opacity: 1; }
+  50% {
+    opacity: 0.8;
+    transform: translateY(50vh) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(110vh) scale(0.3);
+  }
 }
 
 @keyframes petalFall {
@@ -252,15 +279,13 @@ body {
   top: 0;
   left: 0;
   width: 100%;
+  height: 100vh;
   height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: -webkit-fill-available;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.8s ease, visibility 0.8s ease;
   z-index: 1;
-  padding: var(--safe-top) 0 var(--safe-bottom) 0;
 }
 
 .screen.active {
@@ -274,15 +299,34 @@ body {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px 0 40px;
+  flex-direction: column;
+  padding: 0;
+}
+
+.screen-scroll::before,
+.screen-scroll::after {
+  content: '';
+  flex: 1 0 auto;
+  min-height: calc(20px + var(--safe-top));
+}
+
+.screen-scroll::after {
+  min-height: calc(40px + var(--safe-bottom));
+}
+
+.screen-scroll > *:only-child,
+.screen-scroll > .envelope-wrapper,
+.screen-scroll > .wish-content,
+.screen-scroll > .letter-content,
+.screen-scroll > .gallery-content,
+.screen-scroll > .final-content {
+  flex-shrink: 0;
 }
 
 /* ── Envelope Screen ── */
 .envelope-wrapper {
   text-align: center;
-  padding: 20px 20px 40px;
+  padding: 20px;
 }
 
 .tap-hint {
@@ -395,7 +439,7 @@ body {
 /* ── Birthday Wish Screen ── */
 .wish-content {
   text-align: center;
-  padding: 20px 20px 40px;
+  padding: 20px;
   position: relative;
   z-index: 1;
 }
@@ -503,9 +547,9 @@ body {
 /* ── Love Letter Screen ── */
 .letter-content {
   text-align: center;
-  padding: 30px 20px 40px;
+  padding: 30px 20px;
   max-width: 500px;
-  margin: auto;
+  margin: 0 auto;
   position: relative;
   z-index: 1;
 }
@@ -554,9 +598,10 @@ body {
 /* ── Gallery Screen ── */
 .gallery-content {
   text-align: center;
-  padding: 20px 20px 40px;
+  padding: 20px;
   width: 92%;
   max-width: 420px;
+  margin: 0 auto;
 }
 
 .gallery-slider {
@@ -633,10 +678,10 @@ body {
 /* ── Final Screen ── */
 .final-content {
   text-align: center;
-  padding: 20px 20px 40px;
+  padding: 20px;
   z-index: 2;
   position: relative;
-  margin: auto;
+  margin: 0 auto;
 }
 
 .final-title {

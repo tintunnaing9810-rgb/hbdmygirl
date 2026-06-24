@@ -40,6 +40,18 @@ function vibrate() {
   if (navigator.vibrate) navigator.vibrate(10);
 }
 
+// ── iOS standalone viewport fix ──
+function fixViewportHeight() {
+  const vh = window.innerHeight;
+  document.documentElement.style.setProperty('--app-height', vh + 'px');
+  document.querySelectorAll('.screen').forEach(s => {
+    s.style.height = vh + 'px';
+  });
+  document.body.style.height = vh + 'px';
+}
+fixViewportHeight();
+window.addEventListener('resize', fixViewportHeight);
+
 // ── Floating Polaroid Photos ──
 const floatContainer = document.getElementById('floatContainer');
 const floatPool = shuffled(allFloatSources);
@@ -509,44 +521,68 @@ function unlockAudio() {
 document.addEventListener('touchstart', unlockAudio, { once: true });
 document.addEventListener('click', unlockAudio, { once: true });
 
-// ── Flower Petals ──
+// ── Flower Petals (heavy) ──
 const flowerContainer = document.getElementById('flowerContainer');
-const flowerEmojis = ['🌸', '🌺', '🌷', '💮', '🏵️', '🌹', '💐'];
-const petalCount = isMobile ? 3 : 5;
+const flowerEmojis = ['🌸', '🌺', '🌷', '💮', '🏵️', '🌹', '💐', '🌻', '🪷', '🌼'];
+const sparkleEmojis = ['✨', '💫', '⭐', '🌟'];
 
 function createFlowerPetal() {
-  if (flowerContainer.children.length >= (isMobile ? 12 : 20)) return;
+  if (flowerContainer.children.length >= (isMobile ? 25 : 40)) return;
 
   const petal = document.createElement('div');
   petal.classList.add('flower-petal');
   petal.textContent = flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)];
 
   petal.style.left = (Math.random() * 100) + '%';
-  petal.style.fontSize = (1 + Math.random() * 1.2) + 'rem';
-  petal.style.setProperty('--sway', ((Math.random() - 0.5) * 120) + 'px');
+  petal.style.fontSize = (1 + Math.random() * 1.4) + 'rem';
+  petal.style.setProperty('--sway', ((Math.random() - 0.5) * 140) + 'px');
 
-  const duration = 6 + Math.random() * 6;
+  const duration = 5 + Math.random() * 5;
   petal.style.animationDuration = duration + 's';
-  petal.style.animationDelay = (Math.random() * 2) + 's';
+  petal.style.animationDelay = (Math.random() * 1) + 's';
 
   flowerContainer.appendChild(petal);
-  setTimeout(() => petal.remove(), (duration + 3) * 1000);
+  setTimeout(() => petal.remove(), (duration + 2) * 1000);
+}
+
+function createSparkleEmoji() {
+  if (flowerContainer.children.length >= (isMobile ? 30 : 50)) return;
+
+  const spark = document.createElement('div');
+  spark.classList.add('sparkle-float');
+  spark.textContent = sparkleEmojis[Math.floor(Math.random() * sparkleEmojis.length)];
+  spark.style.left = (Math.random() * 100) + '%';
+  spark.style.fontSize = (0.8 + Math.random() * 1) + 'rem';
+
+  const duration = 4 + Math.random() * 4;
+  spark.style.animationDuration = duration + 's';
+  spark.style.animationDelay = (Math.random() * 1.5) + 's';
+
+  flowerContainer.appendChild(spark);
+  setTimeout(() => spark.remove(), (duration + 2) * 1000);
 }
 
 setInterval(() => {
-  for (let i = 0; i < petalCount; i++) {
-    setTimeout(createFlowerPetal, i * 300);
+  for (let i = 0; i < (isMobile ? 4 : 6); i++) {
+    setTimeout(createFlowerPetal, i * 200);
   }
-}, 2000);
+  for (let i = 0; i < (isMobile ? 2 : 4); i++) {
+    setTimeout(createSparkleEmoji, i * 250);
+  }
+}, 1200);
 
-for (let i = 0; i < 6; i++) setTimeout(createFlowerPetal, i * 400);
+for (let i = 0; i < 10; i++) setTimeout(createFlowerPetal, i * 200);
+for (let i = 0; i < 5; i++) setTimeout(createSparkleEmoji, i * 300);
 
-// ── Glitter / Sparkle Effect ──
+// ── Glitter / Sparkle Canvas (heavy) ──
 const glitterCanvas = document.getElementById('glitterCanvas');
 const glCtx = glitterCanvas.getContext('2d');
 let glitterParticles = [];
-const maxGlitter = isMobile ? 35 : 60;
-const glitterColors = ['#FFD700', '#FFF8DC', '#C8A96E', '#FFFFFF', '#FFE4B5', '#F5DEB3', '#FFFACD'];
+const maxGlitter = isMobile ? 80 : 140;
+const glitterColors = [
+  '#FFD700', '#FFF8DC', '#C8A96E', '#FFFFFF', '#FFE4B5',
+  '#F5DEB3', '#FFFACD', '#FFE0B2', '#FFF9C4', '#FFECB3',
+];
 
 function resizeGlitterCanvas() {
   const dpr = window.devicePixelRatio || 1;
@@ -560,17 +596,20 @@ resizeGlitterCanvas();
 
 function spawnGlitter() {
   if (glitterParticles.length < maxGlitter) {
+    const type = Math.random();
     glitterParticles.push({
       x: Math.random() * window.innerWidth,
       y: Math.random() * window.innerHeight,
-      size: Math.random() * 3 + 1,
+      size: Math.random() * 3.5 + 1,
       color: glitterColors[Math.floor(Math.random() * glitterColors.length)],
       life: 0,
-      maxLife: 0.6 + Math.random() * 0.8,
-      speed: 0.008 + Math.random() * 0.015,
-      twinkleSpeed: 2 + Math.random() * 4,
-      driftX: (Math.random() - 0.5) * 0.3,
-      driftY: Math.random() * 0.2 + 0.05,
+      maxLife: 0.5 + Math.random() * 0.9,
+      speed: 0.008 + Math.random() * 0.018,
+      twinkleSpeed: 2 + Math.random() * 5,
+      driftX: (Math.random() - 0.5) * 0.4,
+      driftY: Math.random() * 0.15 + 0.02,
+      isStar: type < 0.4,
+      isDiamond: type >= 0.4 && type < 0.65,
     });
   }
 }
@@ -578,7 +617,7 @@ function spawnGlitter() {
 function animateGlitter() {
   glCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-  for (let i = 0; i < 2; i++) spawnGlitter();
+  for (let i = 0; i < (isMobile ? 4 : 6); i++) spawnGlitter();
 
   glitterParticles = glitterParticles.filter(p => {
     p.life += p.speed;
@@ -588,34 +627,60 @@ function animateGlitter() {
     p.y += p.driftY;
 
     const progress = p.life / p.maxLife;
-    const fadeIn = Math.min(progress * 4, 1);
-    const fadeOut = Math.max(1 - (progress - 0.6) / 0.4, 0);
+    const fadeIn = Math.min(progress * 5, 1);
+    const fadeOut = progress > 0.6 ? Math.max(1 - (progress - 0.6) / 0.4, 0) : 1;
     const alpha = fadeIn * fadeOut;
 
-    const twinkle = 0.5 + 0.5 * Math.sin(p.life * p.twinkleSpeed * Math.PI * 2);
-    const finalAlpha = alpha * (0.3 + 0.7 * twinkle);
+    const twinkle = 0.4 + 0.6 * Math.sin(p.life * p.twinkleSpeed * Math.PI * 2);
+    const finalAlpha = alpha * (0.2 + 0.8 * twinkle);
 
     glCtx.save();
     glCtx.globalAlpha = finalAlpha;
     glCtx.translate(p.x, p.y);
 
-    const starSize = p.size * (0.8 + 0.4 * twinkle);
-    glCtx.fillStyle = p.color;
-    glCtx.beginPath();
-    for (let j = 0; j < 4; j++) {
-      const angle = (j * Math.PI) / 2;
-      glCtx.moveTo(0, 0);
-      glCtx.lineTo(Math.cos(angle - 0.15) * starSize * 0.4, Math.sin(angle - 0.15) * starSize * 0.4);
-      glCtx.lineTo(Math.cos(angle) * starSize, Math.sin(angle) * starSize);
-      glCtx.lineTo(Math.cos(angle + 0.15) * starSize * 0.4, Math.sin(angle + 0.15) * starSize * 0.4);
-    }
-    glCtx.closePath();
-    glCtx.fill();
+    const sz = p.size * (0.7 + 0.5 * twinkle);
 
-    glCtx.beginPath();
-    glCtx.arc(0, 0, starSize * 0.5, 0, Math.PI * 2);
-    glCtx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-    glCtx.fill();
+    if (p.isStar) {
+      glCtx.fillStyle = p.color;
+      glCtx.beginPath();
+      for (let j = 0; j < 4; j++) {
+        const angle = (j * Math.PI) / 2;
+        glCtx.moveTo(0, 0);
+        glCtx.lineTo(Math.cos(angle - 0.12) * sz * 0.35, Math.sin(angle - 0.12) * sz * 0.35);
+        glCtx.lineTo(Math.cos(angle) * sz * 1.2, Math.sin(angle) * sz * 1.2);
+        glCtx.lineTo(Math.cos(angle + 0.12) * sz * 0.35, Math.sin(angle + 0.12) * sz * 0.35);
+      }
+      glCtx.closePath();
+      glCtx.fill();
+
+      glCtx.beginPath();
+      glCtx.arc(0, 0, sz * 0.35, 0, Math.PI * 2);
+      glCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      glCtx.fill();
+    } else if (p.isDiamond) {
+      glCtx.fillStyle = p.color;
+      glCtx.beginPath();
+      glCtx.moveTo(0, -sz);
+      glCtx.lineTo(sz * 0.6, 0);
+      glCtx.lineTo(0, sz);
+      glCtx.lineTo(-sz * 0.6, 0);
+      glCtx.closePath();
+      glCtx.fill();
+
+      glCtx.fillStyle = 'rgba(255,255,255,0.7)';
+      glCtx.beginPath();
+      glCtx.arc(0, 0, sz * 0.25, 0, Math.PI * 2);
+      glCtx.fill();
+    } else {
+      const gradient = glCtx.createRadialGradient(0, 0, 0, 0, 0, sz);
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+      gradient.addColorStop(0.4, p.color);
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      glCtx.fillStyle = gradient;
+      glCtx.beginPath();
+      glCtx.arc(0, 0, sz, 0, Math.PI * 2);
+      glCtx.fill();
+    }
 
     glCtx.restore();
     return true;
