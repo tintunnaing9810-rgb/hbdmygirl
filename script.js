@@ -332,27 +332,6 @@ function buildPhotoHeart() {
   });
 }
 
-// ── Countdown ──
-function updateCountdown() {
-  const now = new Date();
-  const birthday = new Date(now.getFullYear(), 5, 26);
-  if (now > birthday) birthday.setFullYear(birthday.getFullYear() + 1);
-  const diff = birthday - now;
-
-  if (diff < 86400000 && now.getDate() === 26 && now.getMonth() === 5) {
-    document.getElementById('countdown').textContent = "🎉 It's TODAY! Happy Birthday! 🎉";
-    return;
-  }
-
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const secs = Math.floor((diff % (1000 * 60)) / 1000);
-  document.getElementById('countdown').textContent = `${days}d ${hours}h ${mins}m ${secs}s`;
-}
-
-updateCountdown();
-setInterval(updateCountdown, 1000);
 
 // ── Confetti ──
 const confettiCanvas = document.getElementById('confettiCanvas');
