@@ -17,9 +17,17 @@
   <!-- Floating photos background -->
   <div class="float-container" id="floatContainer"></div>
 
+  <!-- Background Video -->
+  <video class="bg-video" id="bgVideo" autoplay loop muted playsinline>
+    <source src="assets/bg_video.mp4" type="video/mp4">
+  </video>
+
   <!-- SCREEN 1: Envelope Reveal -->
   <section class="screen active" id="envelopeScreen">
     <div class="envelope-wrapper">
+      <div class="envelope-photo">
+        <img src="assets/envelope_photo.jpg" alt="us">
+      </div>
       <p class="tap-hint">Tap the envelope</p>
       <div class="envelope" id="envelope">
         <div class="envelope-flap"></div>
@@ -57,6 +65,9 @@
           <p>Your smile lights up my world, your laugh is my favorite sound, and your love is the greatest gift I've ever received.</p>
           <p>Today and every day, I celebrate you — the most wonderful person I know.</p>
           <p class="letter-sign">Forever yours ❤️</p>
+        </div>
+        <div class="letter-photo-frame">
+          <img src="assets/letter_photo.jpg" alt="us" class="letter-photo">
         </div>
         <button class="btn" id="nextToGallery">See Our Memories 📸</button>
       </div>
@@ -107,7 +118,7 @@
           <h1 class="reveal-title">I Love You More Than Words Can Say</h1>
           <p class="reveal-message">Happy Birthday My Love! Here's to another year of love, laughter, and making memories together. You deserve all the happiness in the world, Chunnu.</p>
           <div class="best-photo-frame" id="bestPhotoFrame">
-            <img src="photos/1.jpg" alt="Us" class="best-photo">
+            <img src="assets/candle_photo.jpg" alt="Us" class="best-photo">
           </div>
           <p class="reveal-sign">Forever & Always ❤️</p>
         </div>
