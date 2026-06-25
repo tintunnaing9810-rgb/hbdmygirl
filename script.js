@@ -219,6 +219,7 @@ function buildPhotoStrips() {
 // ── Gallery ──
 const gallerySlider = document.getElementById('gallerySlider');
 const counterEl = document.getElementById('galleryCounter');
+const progressBar = document.getElementById('galleryProgress');
 let currentSlide = 0;
 let slideInterval;
 
@@ -232,19 +233,32 @@ galleryIndices.forEach((n, i) => {
   img.alt = 'memory ' + n;
   img.loading = 'lazy';
   card.appendChild(img);
+
+  card.addEventListener('click', () => {
+    if (card.classList.contains('active')) openLightbox(galleryPath(n));
+  });
+
   gallerySlider.appendChild(card);
 });
 
 const cards = document.querySelectorAll('.gallery-card');
 counterEl.textContent = '1 / ' + cards.length;
+progressBar.style.width = (1 / cards.length * 100) + '%';
 
 function goToSlide(index) {
   if (index < 0) index = cards.length - 1;
   if (index >= cards.length) index = 0;
-  cards.forEach(c => c.classList.remove('active'));
+  cards.forEach(c => {
+    c.classList.remove('active', 'prev', 'next');
+  });
   cards[index].classList.add('active');
+  const prevIdx = (index - 1 + cards.length) % cards.length;
+  const nextIdx = (index + 1) % cards.length;
+  cards[prevIdx].classList.add('prev');
+  cards[nextIdx].classList.add('next');
   currentSlide = index;
   counterEl.textContent = (index + 1) + ' / ' + cards.length;
+  progressBar.style.width = ((index + 1) / cards.length * 100) + '%';
 }
 
 document.getElementById('prevSlide').addEventListener('click', () => {
@@ -265,6 +279,7 @@ function startSlideshow() {
 }
 
 startSlideshow();
+goToSlide(0);
 
 // Touch swipe
 let touchStartX = 0, touchStartY = 0;
