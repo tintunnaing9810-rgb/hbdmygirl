@@ -217,6 +217,51 @@ function buildPhotoStrips() {
 }
 
 // ── Gallery ──
+const loveQuotes = [
+  'My favorite place is next to you',
+  'Every moment with you is magic ✨',
+  'You make ordinary days extraordinary',
+  'My heart smiles when I see you',
+  'Forever isn\'t long enough with you',
+  'You\'re my today and all of my tomorrows',
+  'Home is wherever you are 🏠',
+  'You stole my heart, keep it forever',
+  'My best days start and end with you',
+  'In your arms is my favorite place',
+  'You\'re the reason I believe in love',
+  'Together is my favorite place to be',
+  'Every love song reminds me of you 🎵',
+  'You make my soul smile',
+  'I fell in love with your smile',
+  'My heart beats your name',
+  'You\'re my dream come true',
+  'Life is better with you in it',
+  'You complete my world 🌍',
+  'I choose you, every single day',
+  'Your love is my greatest adventure',
+  'With you, I\'m home',
+  'You are my sunshine ☀️',
+  'I love you more than words can say',
+  'My favorite hello, my hardest goodbye',
+  'You\'re the best thing that ever happened to me',
+  'I never knew love until I found you',
+  'You make me want to be a better person',
+  'Every day with you is a gift 🎁',
+  'You\'re my happily ever after',
+  'I love the way you love me',
+  'My world is brighter because of you',
+  'You had me at hello 💕',
+  'I\'m so lucky to call you mine',
+  'You\'re my person, always',
+  'Love looks beautiful on us',
+  'We go together like coffee and mornings ☕',
+  'You\'re worth every mile between us',
+  'My love for you grows every day',
+  'You make forever feel too short',
+  'I\'d choose you in every lifetime',
+  'Falling for you was the best decision 💝',
+];
+
 const gallerySlider = document.getElementById('gallerySlider');
 const counterEl = document.getElementById('galleryCounter');
 const progressBar = document.getElementById('galleryProgress');
@@ -233,6 +278,11 @@ galleryIndices.forEach((n, i) => {
   img.alt = 'memory ' + n;
   img.loading = 'lazy';
   card.appendChild(img);
+
+  const caption = document.createElement('p');
+  caption.classList.add('gallery-caption');
+  caption.textContent = loveQuotes[i % loveQuotes.length];
+  card.appendChild(caption);
 
   card.addEventListener('click', () => {
     if (card.classList.contains('active')) openLightbox(galleryPath(n));
