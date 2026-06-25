@@ -720,6 +720,9 @@ const wishSky = document.getElementById('wishSky');
 const wishInput = document.getElementById('wishInput');
 const wishSend = document.getElementById('wishSend');
 
+const wishContinue = document.getElementById('wishContinue');
+let wishCount = 0;
+
 function sendWish() {
   const text = wishInput.value.trim();
   if (!text) return;
@@ -734,6 +737,13 @@ function sendWish() {
   wishSky.appendChild(bubble);
   wishInput.value = '';
 
+  wishCount++;
+  if (wishCount >= 1 && wishContinue.classList.contains('hidden')) {
+    wishContinue.classList.remove('hidden');
+    wishContinue.style.opacity = '0';
+    wishContinue.style.animation = 'fadeInUp 1s ease forwards';
+  }
+
   const dur = parseFloat(bubble.style.animationDuration) * 1000;
   setTimeout(() => bubble.remove(), dur + 500);
 }
@@ -742,23 +752,16 @@ wishSend.addEventListener('click', sendWish);
 wishInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') sendWish();
 });
+wishContinue.addEventListener('click', () => showScreen('finaleScreen'));
 
-// ── Easter Egg (tap letter photo 5 times) ──
+// ── Easter Egg (tap letter photo once) ──
 const easterEggPhoto = document.getElementById('easterEggPhoto');
 const easterEggMsg = document.getElementById('easterEggMsg');
-let eggTaps = 0;
-let eggTimer = null;
 
 easterEggPhoto.addEventListener('click', () => {
-  eggTaps++;
-  clearTimeout(eggTimer);
-  eggTimer = setTimeout(() => { eggTaps = 0; }, 2000);
-
-  if (eggTaps >= 5 && !easterEggMsg.classList.contains('visible')) {
-    vibrate();
-    easterEggMsg.classList.add('visible');
-    eggTaps = 0;
-  }
+  if (easterEggMsg.classList.contains('visible')) return;
+  vibrate();
+  easterEggMsg.classList.add('visible');
 });
 
 // ── Prevent iOS bounce ──

@@ -320,7 +320,9 @@ body {
 .screen-scroll > .wish-content,
 .screen-scroll > .letter-content,
 .screen-scroll > .gallery-content,
-.screen-scroll > .final-content {
+.screen-scroll > .final-content,
+.screen-scroll > .wish-wall-content,
+.screen-scroll > .finale-content {
   flex-shrink: 0;
 }
 
@@ -1189,11 +1191,126 @@ body {
   100% { opacity: 1; transform: scale(1) rotate(0deg); }
 }
 
+/* ── Photo Hint ── */
+.photo-hint {
+  display: block;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--coffee-light);
+  margin-top: 6px;
+  animation: pulse 2s ease-in-out infinite;
+  letter-spacing: 0.5px;
+}
+
+/* ── Wish Continue Button ── */
+.wish-continue-btn.hidden {
+  display: none;
+}
+
+.wish-continue-btn {
+  margin-top: 10px;
+}
+
+/* ── Grand Finale Screen ── */
+.finale-content {
+  text-align: center;
+  padding: 30px 20px;
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.finale-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(200, 169, 110, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: finaleGlow 4s ease-in-out infinite;
+}
+
+@keyframes finaleGlow {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+}
+
+.finale-emoji {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  animation: heartPulse 1.5s ease-in-out infinite;
+}
+
+.finale-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: 2.5rem;
+  color: var(--coffee);
+  margin-bottom: 16px;
+  animation: fadeInUp 1s ease forwards;
+  line-height: 1.3;
+}
+
+.finale-text {
+  font-size: 0.95rem;
+  color: var(--coffee-light);
+  line-height: 1.8;
+  max-width: 340px;
+  margin: 0 auto 14px;
+  animation: fadeInUp 1s ease 0.3s forwards;
+  opacity: 0;
+}
+
+.finale-text + .finale-text {
+  animation-delay: 0.5s;
+}
+
+.finale-photo-frame {
+  width: 180px;
+  height: 180px;
+  margin: 20px auto;
+  background: white;
+  padding: 7px 7px 25px 7px;
+  border-radius: 4px;
+  box-shadow: 0 8px 30px rgba(62, 39, 35, 0.25);
+  transform: rotate(-2deg);
+  animation: fadeInUp 1s ease 0.7s forwards;
+  opacity: 0;
+}
+
+.finale-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.finale-sign {
+  font-family: 'Great Vibes', cursive;
+  font-size: 1.8rem;
+  color: var(--gold);
+  margin: 16px 0 8px;
+  animation: fadeInUp 1s ease 0.9s forwards;
+  opacity: 0;
+}
+
+.finale-hearts {
+  font-size: 1.5rem;
+  letter-spacing: 8px;
+  animation: fadeInUp 1s ease 1.1s forwards;
+  opacity: 0;
+  margin-bottom: 20px;
+}
+
 /* ── iPhone Responsive ── */
 @media (max-width: 430px) {
   .title { font-size: 2.5rem; }
   .name { font-size: 3.2rem; }
   .final-title { font-size: 2.2rem; }
+  .finale-title { font-size: 2.2rem; }
   .section-title { font-size: 1.9rem; }
   .love-letter { padding: 18px; font-size: 0.85rem; }
   .gallery-slider { height: 300px; }
@@ -1204,6 +1321,7 @@ body {
   .title { font-size: 2.2rem; }
   .name { font-size: 2.8rem; }
   .final-title { font-size: 1.9rem; }
+  .finale-title { font-size: 1.9rem; }
   .section-title { font-size: 1.7rem; }
   .btn { padding: 12px 28px; font-size: 0.9rem; }
   .gallery-slider { height: 260px; }
