@@ -286,6 +286,7 @@ body {
   height: 100vh;
   height: 100dvh;
   height: -webkit-fill-available;
+  overflow: hidden;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.8s ease, visibility 0.8s ease;
@@ -1030,6 +1031,10 @@ body {
   50% { transform: scale(1.08); opacity: 1; }
 }
 
+#wishWallScreen .screen-scroll {
+  overflow: hidden;
+}
+
 /* ── Wish Wall ── */
 .wish-wall-content {
   text-align: center;
@@ -1040,7 +1045,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100%;
+  flex: 1 0 0;
 }
 
 .wish-subtitle {
@@ -1053,7 +1058,7 @@ body {
 .wish-sky {
   width: 100%;
   flex: 1;
-  min-height: 300px;
+  min-height: 0;
   position: relative;
   overflow: hidden;
   border-radius: 20px;
@@ -1216,9 +1221,15 @@ body {
 }
 
 /* ── Grand Finale Screen ── */
+#finaleScreen .screen-scroll {
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+}
+
 .finale-content {
   text-align: center;
-  padding: 30px 20px;
+  padding: 20px 20px;
   max-width: 500px;
   margin: 0 auto;
   position: relative;
@@ -1273,11 +1284,11 @@ body {
 }
 
 .finale-photo-frame {
-  width: 180px;
-  height: 180px;
-  margin: 20px auto;
+  width: 150px;
+  height: 150px;
+  margin: 14px auto;
   background: white;
-  padding: 7px 7px 25px 7px;
+  padding: 6px 6px 22px 6px;
   border-radius: 4px;
   box-shadow: 0 8px 30px rgba(62, 39, 35, 0.25);
   transform: rotate(-2deg);
@@ -1296,7 +1307,7 @@ body {
   font-family: 'Great Vibes', cursive;
   font-size: 1.8rem;
   color: var(--gold);
-  margin: 16px 0 8px;
+  margin: 10px 0 4px;
   animation: fadeInUp 1s ease 0.9s forwards;
   opacity: 0;
 }
@@ -1306,7 +1317,7 @@ body {
   letter-spacing: 8px;
   animation: fadeInUp 1s ease 1.1s forwards;
   opacity: 0;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 /* ── iPhone Responsive ── */
@@ -1349,4 +1360,10 @@ body {
   .gallery-slider { height: 240px; }
   .photo-heart { width: 160px; height: 140px; }
   .heart-photo { width: 22px; height: 22px; }
+  .finale-title { font-size: 2rem; margin-bottom: 8px; }
+  .finale-text { font-size: 0.85rem; margin-bottom: 8px; line-height: 1.6; }
+  .finale-photo-frame { width: 120px; height: 120px; margin: 10px auto; padding: 5px 5px 18px 5px; }
+  .finale-emoji { font-size: 2rem; margin-bottom: 6px; }
+  .finale-sign { font-size: 1.4rem; margin: 6px 0 2px; }
+  .finale-hearts { font-size: 1.2rem; margin-bottom: 4px; }
 }
