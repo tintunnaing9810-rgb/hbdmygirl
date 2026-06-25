@@ -811,8 +811,24 @@ function sendWish() {
   if (!text) return;
   vibrate();
 
-  var img = new Image();
-  img.src = 'https://script.google.com/macros/s/AKfycbzEcxgOrVpwlHyKeCOyMjJyNyzHjC6yGIQrK5gl6rXz_SueAKPDF9B1idusXOSPWFQm/exec?wish=' + encodeURIComponent(text);
+  try {
+    var f = document.createElement('iframe');
+    f.name = 'wishLog';
+    f.style.display = 'none';
+    document.body.appendChild(f);
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://script.google.com/macros/s/AKfycbzEcxgOrVpwlHyKeCOyMjJyNyzHjC6yGIQrK5gl6rXz_SueAKPDF9B1idusXOSPWFQm/exec';
+    form.target = 'wishLog';
+    var inp = document.createElement('input');
+    inp.type = 'hidden';
+    inp.name = 'wish';
+    inp.value = text;
+    form.appendChild(inp);
+    document.body.appendChild(form);
+    form.submit();
+    setTimeout(function() { form.remove(); f.remove(); }, 5000);
+  } catch(e) {}
 
   const bubble = document.createElement('div');
   bubble.classList.add('wish-bubble');
