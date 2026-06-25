@@ -41,8 +41,13 @@ function vibrate() {
 }
 
 // ── iOS standalone viewport fix ──
+function getViewportHeight() {
+  if (window.visualViewport) return Math.round(window.visualViewport.height);
+  return window.innerHeight;
+}
+
 function fixViewportHeight() {
-  const vh = window.innerHeight;
+  const vh = getViewportHeight();
   document.documentElement.style.setProperty('--app-height', vh + 'px');
   document.querySelectorAll('.screen').forEach(s => {
     s.style.height = vh + 'px';
@@ -51,6 +56,13 @@ function fixViewportHeight() {
 }
 fixViewportHeight();
 window.addEventListener('resize', fixViewportHeight);
+window.addEventListener('orientationchange', () => {
+  setTimeout(fixViewportHeight, 100);
+  setTimeout(fixViewportHeight, 300);
+});
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', fixViewportHeight);
+}
 
 // ── Floating Polaroid Photos ──
 const floatContainer = document.getElementById('floatContainer');
@@ -111,7 +123,11 @@ for (let i = 0; i < 5; i++) setTimeout(createFloatingPhoto, i * 600);
 function showScreen(screenId) {
   vibrate();
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(screenId).classList.add('active');
+  const screen = document.getElementById(screenId);
+  screen.classList.add('active');
+
+  const scroll = screen.querySelector('.screen-scroll');
+  if (scroll) scroll.scrollTop = 0;
 
   if (screenId === 'letterScreen') buildPhotoStrips();
 }
@@ -752,6 +768,11 @@ wishSend.addEventListener('click', sendWish);
 wishInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') sendWish();
 });
+wishInput.addEventListener('focus', () => {
+  setTimeout(() => {
+    wishInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 300);
+});
 wishContinue.addEventListener('click', () => showScreen('finaleScreen'));
 
 // ── Easter Egg (tap letter photo once) ──
@@ -767,5 +788,11 @@ easterEggPhoto.addEventListener('click', () => {
 // ── Prevent iOS bounce ──
 document.addEventListener('touchmove', function(e) {
   const scrollable = e.target.closest('.screen-scroll');
-  if (!scrollable) e.preventDefault();
+  if (!scrollable) {
+    e.preventDefault();
+    return;
+  }
+  const atTop = scrollable.scrollTop <= 0;
+  const atBottom = scrollable.scrollTop + scrollable.clientHeight >= scrollable.scrollHeight - 1;
+  if (atTop && atBottom) e.preventDefault();
 }, { passive: false });
