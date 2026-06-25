@@ -1038,20 +1038,21 @@ body {
 
 /* ── Photo Heart ── */
 .photo-heart {
-  width: 200px;
-  height: 180px;
-  margin: 0 auto 10px;
+  width: 220px;
+  height: 165px;
+  margin: 0 auto 20px;
   position: relative;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 3px;
+  overflow: hidden;
 }
 
 .heart-photo {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   object-fit: cover;
   border-radius: 3px;
   opacity: 0;
@@ -1397,8 +1398,8 @@ body {
   .love-letter { padding: 16px; font-size: 0.8rem; line-height: 1.7; }
   .final-message { font-size: 0.85rem; }
   .subtitle { font-size: 0.9rem; }
-  .photo-heart { width: 170px; height: 155px; }
-  .heart-photo { width: 24px; height: 24px; }
+  .photo-heart { width: 185px; height: 140px; }
+  .heart-photo { width: 20px; height: 20px; }
   .scrapbook-photo img { width: 55px; height: 55px; }
 }
 
@@ -1412,8 +1413,8 @@ body {
   .final-message { margin: 0 auto 10px; }
   .countdown-box { margin-bottom: 10px; padding: 10px 20px; }
   .gallery-slider { height: 280px; }
-  .photo-heart { width: 160px; height: 140px; }
-  .heart-photo { width: 22px; height: 22px; }
+  .photo-heart { width: 170px; height: 128px; }
+  .heart-photo { width: 18px; height: 18px; }
   .finale-title { font-size: 2rem; margin-bottom: 8px; }
   .finale-text { font-size: 0.85rem; margin-bottom: 8px; line-height: 1.6; }
   .finale-photo-frame { width: 120px; height: 120px; margin: 10px auto; padding: 5px 5px 18px 5px; }

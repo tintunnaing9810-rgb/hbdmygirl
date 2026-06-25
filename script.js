@@ -424,8 +424,8 @@ function buildPhotoHeart() {
         delay += 60;
       } else if (cell === 0) {
         const spacer = document.createElement('div');
-        spacer.style.width = '28px';
-        spacer.style.height = '28px';
+        spacer.style.width = '24px';
+        spacer.style.height = '24px';
         container.appendChild(spacer);
       }
     });
