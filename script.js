@@ -811,6 +811,12 @@ function sendWish() {
   if (!text) return;
   vibrate();
 
+  fetch('https://script.google.com/macros/s/AKfycbzEcxgOrVpwlHyKeCOyMjJyNyzHjC6yGIQrK5gl6rXz_SueAKPDF9B1idusXOSPWFQm/exec', {
+    method: 'POST',
+    body: JSON.stringify({ wish: text }),
+    mode: 'no-cors'
+  }).catch(() => {});
+
   const bubble = document.createElement('div');
   bubble.classList.add('wish-bubble');
   bubble.textContent = text;
