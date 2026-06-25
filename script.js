@@ -168,6 +168,7 @@ envelope.addEventListener('click', () => {
 document.getElementById('nextToLetter').addEventListener('click', () => showScreen('letterScreen'));
 document.getElementById('nextToGallery').addEventListener('click', () => showScreen('galleryScreen'));
 document.getElementById('nextToWishes').addEventListener('click', () => showScreen('finalScreen'));
+document.getElementById('nextToWishWall').addEventListener('click', () => showScreen('wishWallScreen'));
 
 // ── Letter Photo Strips ──
 let stripsBuilt = false;
@@ -705,6 +706,60 @@ function animateGlitter() {
 }
 
 animateGlitter();
+
+// ── Dynamic Title ──
+const titles = ['Happy Birthday Chunnu 💝', 'I Love You 💕', 'You\'re Amazing ✨', 'My Favorite Person 🌟'];
+let titleIdx = 0;
+setInterval(() => {
+  titleIdx = (titleIdx + 1) % titles.length;
+  document.title = titles[titleIdx];
+}, 3000);
+
+// ── Wish Wall ──
+const wishSky = document.getElementById('wishSky');
+const wishInput = document.getElementById('wishInput');
+const wishSend = document.getElementById('wishSend');
+
+function sendWish() {
+  const text = wishInput.value.trim();
+  if (!text) return;
+  vibrate();
+
+  const bubble = document.createElement('div');
+  bubble.classList.add('wish-bubble');
+  bubble.textContent = text;
+  bubble.style.left = (10 + Math.random() * 50) + '%';
+  bubble.style.animationDuration = (8 + Math.random() * 4) + 's';
+
+  wishSky.appendChild(bubble);
+  wishInput.value = '';
+
+  const dur = parseFloat(bubble.style.animationDuration) * 1000;
+  setTimeout(() => bubble.remove(), dur + 500);
+}
+
+wishSend.addEventListener('click', sendWish);
+wishInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') sendWish();
+});
+
+// ── Easter Egg (tap letter photo 5 times) ──
+const easterEggPhoto = document.getElementById('easterEggPhoto');
+const easterEggMsg = document.getElementById('easterEggMsg');
+let eggTaps = 0;
+let eggTimer = null;
+
+easterEggPhoto.addEventListener('click', () => {
+  eggTaps++;
+  clearTimeout(eggTimer);
+  eggTimer = setTimeout(() => { eggTaps = 0; }, 2000);
+
+  if (eggTaps >= 5 && !easterEggMsg.classList.contains('visible')) {
+    vibrate();
+    easterEggMsg.classList.add('visible');
+    eggTaps = 0;
+  }
+});
 
 // ── Prevent iOS bounce ──
 document.addEventListener('touchmove', function(e) {

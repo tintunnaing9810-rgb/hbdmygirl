@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="HBD Chunnu">
   <meta name="theme-color" content="#F5F0E8">
-  <title>Happy Birthday Chunnu 🎂</title>
+  <title>Happy Birthday Chunnu 💝</title>
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎂</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 
@@ -77,8 +77,12 @@
           <p>Today and every day, I celebrate you — the most wonderful person I know.</p>
           <p class="letter-sign">Forever yours ❤️</p>
         </div>
-        <div class="letter-photo-frame">
+        <div class="letter-photo-frame" id="easterEggPhoto">
           <img src="assets/letter_photo.jpg" alt="us" class="letter-photo">
+        </div>
+        <div class="easter-egg-msg" id="easterEggMsg">
+          <p class="egg-title">You found a secret! 🤫</p>
+          <p class="egg-text">No matter how far apart we are, my heart always finds its way to you. You're my favorite hello and my hardest goodbye. I love you more than yesterday, less than tomorrow 💕</p>
         </div>
         <button class="btn" id="nextToGallery">See Our Memories 📸</button>
       </div>
@@ -142,11 +146,27 @@
             <img src="assets/forever_photo.jpg" alt="Us" class="best-photo">
           </div>
           <p class="reveal-sign">Forever & Always ❤️</p>
+          <button class="btn" id="nextToWishWall">Make Your Wishes 🌠</button>
         </div>
       </div>
     </div>
     <canvas id="confettiCanvas"></canvas>
     <canvas id="fireworksCanvas"></canvas>
+  </section>
+
+  <!-- SCREEN 6: Wish Wall -->
+  <section class="screen" id="wishWallScreen">
+    <div class="screen-scroll">
+      <div class="wish-wall-content">
+        <h2 class="section-title">Make a Wish 🌠</h2>
+        <p class="wish-subtitle">Type your wishes and watch them fly</p>
+        <div class="wish-sky" id="wishSky"></div>
+        <div class="wish-input-box">
+          <input type="text" class="wish-input" id="wishInput" placeholder="Type your wish..." maxlength="80">
+          <button class="wish-send-btn" id="wishSend">🎈</button>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- Photo Lightbox -->
@@ -160,6 +180,6 @@
     <source src="Hona Tha Pyar- Atif Aslam(Lyrics).mp3" type="audio/mpeg">
   </audio>
 
-  <script src="script.js?v=5"></script>
+  <script src="script.js?v=6"></script>
 </body>
 </html>
