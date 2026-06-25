@@ -1,6 +1,6 @@
 // ── Photo Config ──
 const FLOAT_PHOTOS = 16;
-const GALLERY_PHOTOS = 26;
+const GALLERY_PHOTOS = 42;
 const EXTRA_PHOTOS = 28;
 
 function floatPath(n) { return 'assets/float_' + n + '.jpg'; }
