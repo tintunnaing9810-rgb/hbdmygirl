@@ -41,28 +41,30 @@ function vibrate() {
 }
 
 // ── iOS standalone viewport fix ──
-function getViewportHeight() {
-  if (window.visualViewport) return Math.round(window.visualViewport.height);
-  return window.innerHeight;
-}
+let appHeight = window.innerHeight;
 
 function fixViewportHeight() {
-  const vh = getViewportHeight();
-  document.documentElement.style.setProperty('--app-height', vh + 'px');
+  document.documentElement.style.setProperty('--app-height', appHeight + 'px');
   document.querySelectorAll('.screen').forEach(s => {
-    s.style.height = vh + 'px';
+    s.style.height = appHeight + 'px';
   });
-  document.body.style.height = vh + 'px';
+  document.body.style.height = appHeight + 'px';
 }
 fixViewportHeight();
-window.addEventListener('resize', fixViewportHeight);
-window.addEventListener('orientationchange', () => {
-  setTimeout(fixViewportHeight, 100);
-  setTimeout(fixViewportHeight, 300);
+
+window.addEventListener('resize', () => {
+  const newH = window.innerHeight;
+  if (newH > appHeight) {
+    appHeight = newH;
+    fixViewportHeight();
+  }
 });
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', fixViewportHeight);
-}
+window.addEventListener('orientationchange', () => {
+  setTimeout(() => {
+    appHeight = window.innerHeight;
+    fixViewportHeight();
+  }, 300);
+});
 
 // ── Floating Polaroid Photos ──
 const floatContainer = document.getElementById('floatContainer');
@@ -767,11 +769,6 @@ function sendWish() {
 wishSend.addEventListener('click', sendWish);
 wishInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') sendWish();
-});
-wishInput.addEventListener('focus', () => {
-  setTimeout(() => {
-    wishInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 300);
 });
 wishContinue.addEventListener('click', () => showScreen('finaleScreen'));
 

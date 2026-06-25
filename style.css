@@ -1031,21 +1031,22 @@ body {
   50% { transform: scale(1.08); opacity: 1; }
 }
 
-#wishWallScreen .screen-scroll {
-  overflow: hidden;
+#wishWallScreen .screen-scroll::before,
+#wishWallScreen .screen-scroll::after {
+  display: none;
 }
 
 /* ── Wish Wall ── */
 .wish-wall-content {
   text-align: center;
-  padding: 20px;
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1 0 0;
+  flex: 1;
+  padding: calc(20px + var(--safe-top)) 20px calc(20px + var(--safe-bottom));
 }
 
 .wish-subtitle {
@@ -1058,7 +1059,7 @@ body {
 .wish-sky {
   width: 100%;
   flex: 1;
-  min-height: 0;
+  min-height: 150px;
   position: relative;
   overflow: hidden;
   border-radius: 20px;
@@ -1223,13 +1224,18 @@ body {
 /* ── Grand Finale Screen ── */
 #finaleScreen .screen-scroll {
   overflow: hidden;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+}
+
+#finaleScreen .screen-scroll::before,
+#finaleScreen .screen-scroll::after {
+  display: none;
 }
 
 .finale-content {
   text-align: center;
-  padding: 20px 20px;
+  padding: calc(16px + var(--safe-top)) 20px calc(16px + var(--safe-bottom));
   max-width: 500px;
   margin: 0 auto;
   position: relative;
