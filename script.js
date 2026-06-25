@@ -817,7 +817,7 @@ function sendWish() {
     f.style.display = 'none';
     document.body.appendChild(f);
     var form = document.createElement('form');
-    form.method = 'POST';
+    form.method = 'GET';
     form.action = 'https://script.google.com/macros/s/AKfycbzEcxgOrVpwlHyKeCOyMjJyNyzHjC6yGIQrK5gl6rXz_SueAKPDF9B1idusXOSPWFQm/exec';
     form.target = 'wishLog';
     var inp = document.createElement('input');
