@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="HBD Chunnu">
   <meta name="theme-color" content="#F5F0E8">
-  <title>Happy Birthday Chunnu 🎂</title>
+  <title>Happy Birthday Chunnu 💝</title>
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎂</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
 
@@ -40,7 +40,8 @@
           <div class="envelope-flap"></div>
           <div class="envelope-body">
             <div class="letter">
-              <p>You have a special surprise...</p>
+              <p class="letter-teaser-title">Happy Birthday in Advance! 🎂</p>
+              <p class="letter-teaser-msg">I made something special just for you... open it on your birthday 💝</p>
             </div>
           </div>
         </div>
@@ -76,8 +77,13 @@
           <p>Today and every day, I celebrate you — the most wonderful person I know.</p>
           <p class="letter-sign">Forever yours ❤️</p>
         </div>
-        <div class="letter-photo-frame">
+        <div class="letter-photo-frame" id="easterEggPhoto">
           <img src="assets/letter_photo.jpg" alt="us" class="letter-photo">
+          <span class="photo-hint">tap me ✨</span>
+        </div>
+        <div class="easter-egg-msg" id="easterEggMsg">
+          <p class="egg-title">You found a secret! 🤫</p>
+          <p class="egg-text">No matter how far apart we are, my heart always finds its way to you. You're my favorite hello and my hardest goodbye. I love you more than yesterday, less than tomorrow 💕</p>
         </div>
         <button class="btn" id="nextToGallery">See Our Memories 📸</button>
       </div>
@@ -118,9 +124,17 @@
           </div>
         </div>
         <p class="blow-hint" id="blowHint">Tap the candles to blow them out!</p>
-        <div class="countdown-box">
-          <p class="countdown-label">Your special day</p>
-          <div class="countdown" id="countdown"></div>
+        <div class="birthday-badge">
+          <div class="badge-sparkle badge-sparkle-1">✨</div>
+          <div class="badge-sparkle badge-sparkle-2">🌟</div>
+          <div class="badge-sparkle badge-sparkle-3">💫</div>
+          <div class="badge-sparkle badge-sparkle-4">✨</div>
+          <div class="badge-inner">
+            <p class="badge-label">~ Your Special Day ~</p>
+            <p class="badge-date">June 26, 2026</p>
+            <p class="badge-heart">💖</p>
+            <p class="badge-message">A day the world became more beautiful</p>
+          </div>
         </div>
         <button class="btn confetti-btn" id="blowBtn">🎉 Blow the Candles! 🎉</button>
 
@@ -130,14 +144,49 @@
           <h1 class="reveal-title">I Love You More Than Words Can Say</h1>
           <p class="reveal-message">Happy Birthday My Love! Here's to another year of love, laughter, and making memories together. You deserve all the happiness in the world, Chunnu.</p>
           <div class="best-photo-frame" id="bestPhotoFrame">
-            <img src="assets/candle_photo.jpg" alt="Us" class="best-photo">
+            <img src="assets/forever_photo.jpg" alt="Us" class="best-photo">
           </div>
           <p class="reveal-sign">Forever & Always ❤️</p>
+          <button class="btn" id="nextToWishWall">Make Your Wishes 🌠</button>
         </div>
       </div>
     </div>
     <canvas id="confettiCanvas"></canvas>
     <canvas id="fireworksCanvas"></canvas>
+  </section>
+
+  <!-- SCREEN 6: Wish Wall -->
+  <section class="screen" id="wishWallScreen">
+    <div class="screen-scroll">
+      <div class="wish-wall-content">
+        <h2 class="section-title">Make a Wish 🌠</h2>
+        <p class="wish-subtitle">Type your wishes and watch them fly</p>
+        <div class="wish-sky" id="wishSky"></div>
+        <div class="wish-input-box">
+          <input type="text" class="wish-input" id="wishInput" placeholder="Type your wish..." maxlength="80">
+          <button class="wish-send-btn" id="wishSend">🎈</button>
+        </div>
+        <button class="btn wish-continue-btn hidden" id="wishContinue">One Last Thing 💫</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN 7: Grand Finale -->
+  <section class="screen" id="finaleScreen">
+    <div class="screen-scroll">
+      <div class="finale-content">
+        <div class="finale-glow"></div>
+        <p class="finale-emoji">🤍</p>
+        <h1 class="finale-title">To The One Who Has My Heart</h1>
+        <p class="finale-text">Every love story is beautiful, but ours is my favourite. Thank you for choosing me, for loving me, for being you.</p>
+        <p class="finale-text">This is just a small gift, but my love for you is bigger than anything I could ever put into words.</p>
+        <div class="finale-photo-frame">
+          <img src="assets/envelope_photo.jpg" alt="us" class="finale-photo">
+        </div>
+        <p class="finale-sign">Yours, now and forever</p>
+        <p class="finale-hearts">💝 💝 💝</p>
+      </div>
+    </div>
   </section>
 
   <!-- Photo Lightbox -->
@@ -151,6 +200,6 @@
     <source src="Hona Tha Pyar- Atif Aslam(Lyrics).mp3" type="audio/mpeg">
   </audio>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=7"></script>
 </body>
 </html>

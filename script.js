@@ -40,6 +40,18 @@ function vibrate() {
   if (navigator.vibrate) navigator.vibrate(10);
 }
 
+// ── iOS standalone viewport fix ──
+function fixViewportHeight() {
+  const vh = window.innerHeight;
+  document.documentElement.style.setProperty('--app-height', vh + 'px');
+  document.querySelectorAll('.screen').forEach(s => {
+    s.style.height = vh + 'px';
+  });
+  document.body.style.height = vh + 'px';
+}
+fixViewportHeight();
+window.addEventListener('resize', fixViewportHeight);
+
 // ── Floating Polaroid Photos ──
 const floatContainer = document.getElementById('floatContainer');
 const floatPool = shuffled(allFloatSources);
@@ -57,7 +69,8 @@ function createFloatingPhoto() {
   polaroid.style.setProperty('--rot', rot + 'deg');
   const r = Math.random();
   polaroid.style.left = r < 0.5 ? (Math.random() * 30) + '%' : (65 + Math.random() * 30) + '%';
-  polaroid.style.animationDuration = (Math.random() * 3 + 10) + 's';
+  const duration = Math.random() * 3 + 12;
+  polaroid.style.animationDuration = duration + 's';
   polaroid.style.animationDelay = '0s';
 
   const img = document.createElement('img');
@@ -69,7 +82,7 @@ function createFloatingPhoto() {
   polaroid.addEventListener('click', () => openLightbox(src));
 
   floatContainer.appendChild(polaroid);
-  setTimeout(() => polaroid.remove(), 14000);
+  setTimeout(() => polaroid.remove(), duration * 1000 + 500);
 }
 
 // ── Photo Lightbox ──
@@ -106,33 +119,48 @@ function showScreen(screenId) {
 // ── Envelope ──
 const envelope = document.getElementById('envelope');
 const tapHint = document.querySelector('.tap-hint');
-const BIRTHDAY = new Date(2026, 5, 26, 0, 0, 0);
+
+// June 26, 2026 5:00 AM Myanmar Time (UTC+6:30) = June 25, 2026 22:30 UTC
+const UNLOCK_TIME = Date.UTC(2026, 5, 25, 22, 30, 0);
+const PREVIEW_MODE = new URLSearchParams(window.location.search).has('preview');
+
+function isUnlocked() {
+  return PREVIEW_MODE || Date.now() >= UNLOCK_TIME;
+}
 
 function updateEnvelopeCountdown() {
-  const now = new Date();
-  const diff = BIRTHDAY - now;
+  const diff = UNLOCK_TIME - Date.now();
   if (diff <= 0) {
-    tapHint.textContent = 'Tap the envelope';
+    tapHint.innerHTML = 'Tap the envelope 💌';
+    tapHint.style.fontSize = '1.05rem';
+    envelope.style.opacity = '1';
     return;
   }
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const secs = Math.floor((diff % (1000 * 60)) / 1000);
-  tapHint.textContent = `Your surprise unlocks in ${days}d ${hours}h ${mins}m ${secs}s`;
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const mins = Math.floor((diff % 3600000) / 60000);
+  const secs = Math.floor((diff % 60000) / 1000);
+
+  let timeStr = '';
+  if (days > 0) timeStr += days + 'd ';
+  timeStr += hours + 'h ' + mins + 'm ' + secs + 's';
+
+  tapHint.innerHTML = 'Your surprise unlocks in<br><span style="font-size:1.2rem;font-weight:600;color:#6F4E37;letter-spacing:1px">' + timeStr + '</span>';
+  envelope.style.opacity = '0.85';
 }
 
 updateEnvelopeCountdown();
 setInterval(updateEnvelopeCountdown, 1000);
 
-// TODO: Re-enable date lock before going live
 envelope.addEventListener('click', () => {
-  envelope.classList.add('opened');
-  if (!isPlaying) {
-    music.currentTime = 17;
-    music.play().catch(() => {});
-    isPlaying = true;
+  if (!isUnlocked()) {
+    vibrate();
+    envelope.classList.add('locked-shake');
+    setTimeout(() => envelope.classList.remove('locked-shake'), 500);
+    return;
   }
+  envelope.classList.add('opened');
+  if (!isPlaying) playMusic();
   setTimeout(() => showScreen('wishScreen'), 1200);
 });
 
@@ -140,6 +168,7 @@ envelope.addEventListener('click', () => {
 document.getElementById('nextToLetter').addEventListener('click', () => showScreen('letterScreen'));
 document.getElementById('nextToGallery').addEventListener('click', () => showScreen('galleryScreen'));
 document.getElementById('nextToWishes').addEventListener('click', () => showScreen('finalScreen'));
+document.getElementById('nextToWishWall').addEventListener('click', () => showScreen('wishWallScreen'));
 
 // ── Letter Photo Strips ──
 let stripsBuilt = false;
@@ -320,27 +349,6 @@ function buildPhotoHeart() {
   });
 }
 
-// ── Countdown ──
-function updateCountdown() {
-  const now = new Date();
-  const birthday = new Date(now.getFullYear(), 5, 26);
-  if (now > birthday) birthday.setFullYear(birthday.getFullYear() + 1);
-  const diff = birthday - now;
-
-  if (diff < 86400000 && now.getDate() === 26 && now.getMonth() === 5) {
-    document.getElementById('countdown').textContent = "🎉 It's TODAY! Happy Birthday! 🎉";
-    return;
-  }
-
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const secs = Math.floor((diff % (1000 * 60)) / 1000);
-  document.getElementById('countdown').textContent = `${days}d ${hours}h ${mins}m ${secs}s`;
-}
-
-updateCountdown();
-setInterval(updateCountdown, 1000);
 
 // ── Confetti ──
 const confettiCanvas = document.getElementById('confettiCanvas');
@@ -492,61 +500,105 @@ function explode(fw) {
   }
 }
 
-// ── Music (auto-play, no visible button) ──
+// ── Music (iOS-safe) ──
 const music = document.getElementById('bgMusic');
 let isPlaying = false;
 let audioUnlocked = false;
 
 function unlockAudio() {
   if (audioUnlocked) return;
-  music.play().then(() => {
-    music.pause();
-    music.currentTime = 0;
-    audioUnlocked = true;
-  }).catch(() => {});
+  music.volume = 0.01;
+  const p = music.play();
+  if (p) {
+    p.then(() => {
+      music.pause();
+      music.currentTime = 0;
+      music.volume = 1;
+      audioUnlocked = true;
+    }).catch(() => {});
+  }
 }
 
-document.addEventListener('touchstart', unlockAudio, { once: true });
-document.addEventListener('click', unlockAudio, { once: true });
+function playMusic() {
+  music.currentTime = 17;
+  music.volume = 1;
+  const p = music.play();
+  if (p) {
+    p.then(() => { isPlaying = true; })
+     .catch(() => {
+       setTimeout(() => {
+         music.play().then(() => { isPlaying = true; }).catch(() => {});
+       }, 300);
+     });
+  }
+}
 
-// ── Flower Petals ──
+document.addEventListener('touchstart', unlockAudio, { once: false });
+document.addEventListener('touchend', unlockAudio, { once: false });
+document.addEventListener('click', unlockAudio, { once: false });
+
+// ── Flower Petals (heavy) ──
 const flowerContainer = document.getElementById('flowerContainer');
-const flowerEmojis = ['🌸', '🌺', '🌷', '💮', '🏵️', '🌹', '💐'];
-const petalCount = isMobile ? 3 : 5;
+const flowerEmojis = ['🌸', '🌺', '🌷', '💮', '🏵️', '🌹', '💐', '🌻', '🪷', '🌼'];
+const sparkleEmojis = ['✨', '💫', '⭐', '🌟'];
 
 function createFlowerPetal() {
-  if (flowerContainer.children.length >= (isMobile ? 12 : 20)) return;
+  if (flowerContainer.children.length >= (isMobile ? 25 : 40)) return;
 
   const petal = document.createElement('div');
   petal.classList.add('flower-petal');
   petal.textContent = flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)];
 
   petal.style.left = (Math.random() * 100) + '%';
-  petal.style.fontSize = (1 + Math.random() * 1.2) + 'rem';
-  petal.style.setProperty('--sway', ((Math.random() - 0.5) * 120) + 'px');
+  petal.style.fontSize = (1 + Math.random() * 1.4) + 'rem';
+  petal.style.setProperty('--sway', ((Math.random() - 0.5) * 140) + 'px');
 
-  const duration = 6 + Math.random() * 6;
+  const duration = 5 + Math.random() * 5;
   petal.style.animationDuration = duration + 's';
-  petal.style.animationDelay = (Math.random() * 2) + 's';
+  petal.style.animationDelay = (Math.random() * 1) + 's';
 
   flowerContainer.appendChild(petal);
-  setTimeout(() => petal.remove(), (duration + 3) * 1000);
+  setTimeout(() => petal.remove(), (duration + 2) * 1000);
+}
+
+function createSparkleEmoji() {
+  if (flowerContainer.children.length >= (isMobile ? 30 : 50)) return;
+
+  const spark = document.createElement('div');
+  spark.classList.add('sparkle-float');
+  spark.textContent = sparkleEmojis[Math.floor(Math.random() * sparkleEmojis.length)];
+  spark.style.left = (Math.random() * 100) + '%';
+  spark.style.fontSize = (0.8 + Math.random() * 1) + 'rem';
+
+  const duration = 4 + Math.random() * 4;
+  spark.style.animationDuration = duration + 's';
+  spark.style.animationDelay = (Math.random() * 1.5) + 's';
+
+  flowerContainer.appendChild(spark);
+  setTimeout(() => spark.remove(), (duration + 2) * 1000);
 }
 
 setInterval(() => {
-  for (let i = 0; i < petalCount; i++) {
-    setTimeout(createFlowerPetal, i * 300);
+  for (let i = 0; i < (isMobile ? 4 : 6); i++) {
+    setTimeout(createFlowerPetal, i * 200);
   }
-}, 2000);
+  for (let i = 0; i < (isMobile ? 2 : 4); i++) {
+    setTimeout(createSparkleEmoji, i * 250);
+  }
+}, 1200);
 
-for (let i = 0; i < 6; i++) setTimeout(createFlowerPetal, i * 400);
+for (let i = 0; i < 10; i++) setTimeout(createFlowerPetal, i * 200);
+for (let i = 0; i < 5; i++) setTimeout(createSparkleEmoji, i * 300);
 
-// ── Glitter / Sparkle Effect ──
+// ── Glitter / Sparkle Canvas (heavy) ──
 const glitterCanvas = document.getElementById('glitterCanvas');
 const glCtx = glitterCanvas.getContext('2d');
 let glitterParticles = [];
-const maxGlitter = isMobile ? 35 : 60;
-const glitterColors = ['#FFD700', '#FFF8DC', '#C8A96E', '#FFFFFF', '#FFE4B5', '#F5DEB3', '#FFFACD'];
+const maxGlitter = isMobile ? 80 : 140;
+const glitterColors = [
+  '#FFD700', '#FFF8DC', '#C8A96E', '#FFFFFF', '#FFE4B5',
+  '#F5DEB3', '#FFFACD', '#FFE0B2', '#FFF9C4', '#FFECB3',
+];
 
 function resizeGlitterCanvas() {
   const dpr = window.devicePixelRatio || 1;
@@ -560,17 +612,20 @@ resizeGlitterCanvas();
 
 function spawnGlitter() {
   if (glitterParticles.length < maxGlitter) {
+    const type = Math.random();
     glitterParticles.push({
       x: Math.random() * window.innerWidth,
       y: Math.random() * window.innerHeight,
-      size: Math.random() * 3 + 1,
+      size: Math.random() * 3.5 + 1,
       color: glitterColors[Math.floor(Math.random() * glitterColors.length)],
       life: 0,
-      maxLife: 0.6 + Math.random() * 0.8,
-      speed: 0.008 + Math.random() * 0.015,
-      twinkleSpeed: 2 + Math.random() * 4,
-      driftX: (Math.random() - 0.5) * 0.3,
-      driftY: Math.random() * 0.2 + 0.05,
+      maxLife: 0.5 + Math.random() * 0.9,
+      speed: 0.008 + Math.random() * 0.018,
+      twinkleSpeed: 2 + Math.random() * 5,
+      driftX: (Math.random() - 0.5) * 0.4,
+      driftY: Math.random() * 0.15 + 0.02,
+      isStar: type < 0.4,
+      isDiamond: type >= 0.4 && type < 0.65,
     });
   }
 }
@@ -578,7 +633,7 @@ function spawnGlitter() {
 function animateGlitter() {
   glCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-  for (let i = 0; i < 2; i++) spawnGlitter();
+  for (let i = 0; i < (isMobile ? 4 : 6); i++) spawnGlitter();
 
   glitterParticles = glitterParticles.filter(p => {
     p.life += p.speed;
@@ -588,34 +643,60 @@ function animateGlitter() {
     p.y += p.driftY;
 
     const progress = p.life / p.maxLife;
-    const fadeIn = Math.min(progress * 4, 1);
-    const fadeOut = Math.max(1 - (progress - 0.6) / 0.4, 0);
+    const fadeIn = Math.min(progress * 5, 1);
+    const fadeOut = progress > 0.6 ? Math.max(1 - (progress - 0.6) / 0.4, 0) : 1;
     const alpha = fadeIn * fadeOut;
 
-    const twinkle = 0.5 + 0.5 * Math.sin(p.life * p.twinkleSpeed * Math.PI * 2);
-    const finalAlpha = alpha * (0.3 + 0.7 * twinkle);
+    const twinkle = 0.4 + 0.6 * Math.sin(p.life * p.twinkleSpeed * Math.PI * 2);
+    const finalAlpha = alpha * (0.2 + 0.8 * twinkle);
 
     glCtx.save();
     glCtx.globalAlpha = finalAlpha;
     glCtx.translate(p.x, p.y);
 
-    const starSize = p.size * (0.8 + 0.4 * twinkle);
-    glCtx.fillStyle = p.color;
-    glCtx.beginPath();
-    for (let j = 0; j < 4; j++) {
-      const angle = (j * Math.PI) / 2;
-      glCtx.moveTo(0, 0);
-      glCtx.lineTo(Math.cos(angle - 0.15) * starSize * 0.4, Math.sin(angle - 0.15) * starSize * 0.4);
-      glCtx.lineTo(Math.cos(angle) * starSize, Math.sin(angle) * starSize);
-      glCtx.lineTo(Math.cos(angle + 0.15) * starSize * 0.4, Math.sin(angle + 0.15) * starSize * 0.4);
-    }
-    glCtx.closePath();
-    glCtx.fill();
+    const sz = p.size * (0.7 + 0.5 * twinkle);
 
-    glCtx.beginPath();
-    glCtx.arc(0, 0, starSize * 0.5, 0, Math.PI * 2);
-    glCtx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-    glCtx.fill();
+    if (p.isStar) {
+      glCtx.fillStyle = p.color;
+      glCtx.beginPath();
+      for (let j = 0; j < 4; j++) {
+        const angle = (j * Math.PI) / 2;
+        glCtx.moveTo(0, 0);
+        glCtx.lineTo(Math.cos(angle - 0.12) * sz * 0.35, Math.sin(angle - 0.12) * sz * 0.35);
+        glCtx.lineTo(Math.cos(angle) * sz * 1.2, Math.sin(angle) * sz * 1.2);
+        glCtx.lineTo(Math.cos(angle + 0.12) * sz * 0.35, Math.sin(angle + 0.12) * sz * 0.35);
+      }
+      glCtx.closePath();
+      glCtx.fill();
+
+      glCtx.beginPath();
+      glCtx.arc(0, 0, sz * 0.35, 0, Math.PI * 2);
+      glCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      glCtx.fill();
+    } else if (p.isDiamond) {
+      glCtx.fillStyle = p.color;
+      glCtx.beginPath();
+      glCtx.moveTo(0, -sz);
+      glCtx.lineTo(sz * 0.6, 0);
+      glCtx.lineTo(0, sz);
+      glCtx.lineTo(-sz * 0.6, 0);
+      glCtx.closePath();
+      glCtx.fill();
+
+      glCtx.fillStyle = 'rgba(255,255,255,0.7)';
+      glCtx.beginPath();
+      glCtx.arc(0, 0, sz * 0.25, 0, Math.PI * 2);
+      glCtx.fill();
+    } else {
+      const gradient = glCtx.createRadialGradient(0, 0, 0, 0, 0, sz);
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+      gradient.addColorStop(0.4, p.color);
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      glCtx.fillStyle = gradient;
+      glCtx.beginPath();
+      glCtx.arc(0, 0, sz, 0, Math.PI * 2);
+      glCtx.fill();
+    }
 
     glCtx.restore();
     return true;
@@ -625,6 +706,63 @@ function animateGlitter() {
 }
 
 animateGlitter();
+
+// ── Dynamic Title ──
+const titles = ['Happy Birthday Chunnu 💝', 'I Love You 💕', 'You\'re Amazing ✨', 'My Favorite Person 🌟'];
+let titleIdx = 0;
+setInterval(() => {
+  titleIdx = (titleIdx + 1) % titles.length;
+  document.title = titles[titleIdx];
+}, 3000);
+
+// ── Wish Wall ──
+const wishSky = document.getElementById('wishSky');
+const wishInput = document.getElementById('wishInput');
+const wishSend = document.getElementById('wishSend');
+
+const wishContinue = document.getElementById('wishContinue');
+let wishCount = 0;
+
+function sendWish() {
+  const text = wishInput.value.trim();
+  if (!text) return;
+  vibrate();
+
+  const bubble = document.createElement('div');
+  bubble.classList.add('wish-bubble');
+  bubble.textContent = text;
+  bubble.style.left = (10 + Math.random() * 50) + '%';
+  bubble.style.animationDuration = (8 + Math.random() * 4) + 's';
+
+  wishSky.appendChild(bubble);
+  wishInput.value = '';
+
+  wishCount++;
+  if (wishCount >= 1 && wishContinue.classList.contains('hidden')) {
+    wishContinue.classList.remove('hidden');
+    wishContinue.style.opacity = '0';
+    wishContinue.style.animation = 'fadeInUp 1s ease forwards';
+  }
+
+  const dur = parseFloat(bubble.style.animationDuration) * 1000;
+  setTimeout(() => bubble.remove(), dur + 500);
+}
+
+wishSend.addEventListener('click', sendWish);
+wishInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') sendWish();
+});
+wishContinue.addEventListener('click', () => showScreen('finaleScreen'));
+
+// ── Easter Egg (tap letter photo once) ──
+const easterEggPhoto = document.getElementById('easterEggPhoto');
+const easterEggMsg = document.getElementById('easterEggMsg');
+
+easterEggPhoto.addEventListener('click', () => {
+  if (easterEggMsg.classList.contains('visible')) return;
+  vibrate();
+  easterEggMsg.classList.add('visible');
+});
 
 // ── Prevent iOS bounce ──
 document.addEventListener('touchmove', function(e) {
